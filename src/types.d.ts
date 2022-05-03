@@ -1,0 +1,18 @@
+export interface IConfig {
+    readonly type: string = "custom:datetime-card";
+    entities?: IEntity[] = [];
+    image?: string;
+    title?: string;
+}
+export interface IEntity {
+    id: string;
+    max: number;
+}
+export interface IHass {
+    states: { [key: string]: IState; };
+}
+
+export interface IState {
+    attributes: { [key: string]: string; };
+    state: any
+}

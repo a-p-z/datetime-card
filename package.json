@@ -1,0 +1,71 @@
+{
+  "name": "datetime-card",
+  "version": "1.0.0",
+  "description": "A minimalistic card for Home Assistant Lovelace UI which shows how many days it has been between any input_datetime and today.",
+  "author": {
+    "email": "antpza@gmail.com",
+    "name": "apz",
+    "url": "http://github.com/a-p-z"
+  },
+  "scripts": {
+    "build": "rollup -c",
+    "dev": "rollup -c -w",
+    "start": "sirv public --no-clear",
+    "check": "svelte-check --tsconfig ./tsconfig.json",
+    "test": "jest src",
+    "test:watch": "npm run test -- --watch",
+    "coverage": "jest --collect-coverage"
+  },
+  "devDependencies": {
+    "@babel/preset-env": "^7.17.10",
+    "@rollup/plugin-commonjs": "^17.0.0",
+    "@rollup/plugin-node-resolve": "^11.0.0",
+    "@rollup/plugin-typescript": "^8.0.0",
+    "@testing-library/jest-dom": "^5.16.4",
+    "@testing-library/svelte": "^3.1.1",
+    "@tsconfig/svelte": "^2.0.1",
+    "@types/jest": "^27.5.0",
+    "babel-jest": "^28.1.0",
+    "jest": "^28.1.0",
+    "jest-environment-jsdom": "^28.1.0",
+    "rollup": "^2.3.4",
+    "rollup-plugin-css-only": "^3.1.0",
+    "rollup-plugin-svelte": "^7.0.0",
+    "rollup-plugin-terser": "^7.0.0",
+    "svelte": "^3.0.0",
+    "svelte-check": "^2.0.0",
+    "svelte-jester": "^2.3.2",
+    "svelte-preprocess": "^4.10.6",
+    "ts-jest": "^28.0.2",
+    "tslib": "^2.0.0",
+    "typescript": "^4.6.4"
+  },
+  "dependencies": {
+    "sirv-cli": "^2.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/a-p-z/datetime-card.git"
+  },
+  "jest": {
+    "testEnvironment": "jsdom",
+    "transform": {
+      "^.+\\.svelte$": [
+        "svelte-jester",
+        {
+          "preprocess": true
+        }
+      ],
+      "^.+\\.js$": "babel-jest",
+      "^.+\\.ts$": "ts-jest"
+    },
+    "moduleFileExtensions": [
+      "js",
+      "ts",
+      "svelte"
+    ],
+    "setupFilesAfterEnv": [
+      "@testing-library/jest-dom/extend-expect"
+    ]
+  }
+}

@@ -3,7 +3,7 @@ A minimalistic card for [Home Assistant]( https://github.com/home-assistant/core
 
 Useful to remind you how many days it has been since you replaced your water filter or you watered your favoirite plants.
 
-![chinese_money](images/chinese_money.png "Chinese money")
+![chinese_money](https://raw.githubusercontent.com/a-p-z/datetime-card/main/images/chinese_money.png "Chinese money")
 ## Installation
 
 You can download [datetime-card.js](https://github.com/a-p-z/datetime-card/releases/download/1.0.0/datetime-card.js) to your `configuration/www` folder and cofigure Lovelace to load it:

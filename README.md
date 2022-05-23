@@ -17,6 +17,27 @@ lovelace:
       type: module
 ```
 
+## Configuration
+- Open a dashboard in edit mode
+- Click on add a card
+- Search datetime-card
+- Click on the card preview
+- Use the visual or the code editor to configure your card, as below
+
+![configuration](https://raw.githubusercontent.com/a-p-z/datetime-card/main/images/configuration.png "Configuration")
+```yaml
+type: custom:datetime-card
+title: Chinese money
+image: /local/plant_chinese_money.png
+entities:
+  - id: input_datetime.plant_chinese_money_w
+    max: 9
+  - id: input_datetime.plant_chinese_money_m
+    max: 5
+  - id: input_datetime.plant_chinese_money_f
+    max: 17
+```
+
 ## TODO
 - [ ] Add autocomplete in the editor for entities
 - [ ] Add dnd in the editor for entities

@@ -37,6 +37,7 @@ entities:
   - id: input_datetime.plant_chinese_money_f
     max: 17
 ```
+> **_NOTE:_** [lovelace-card-mod](https://github.com/thomasloven/lovelace-card-mod) makes the visual editor crash because it tries to overwrite setConfig method, which in datetime-card is read-only.
 
 ## TODO
 - [ ] Add autocomplete in the editor for entities

@@ -1,7 +1,4 @@
 {
     "name": "Datetime Card",
-    "render_readme": true,
-    "domains": [
-        "input_datetime"
-    ]
+    "render_readme": true
 }

@@ -3,6 +3,7 @@ export interface IConfig {
     entities?: IEntity[] = [];
     image?: string;
     title?: string;
+    show_names: boolean;
 }
 export interface IEntity {
     id: string;

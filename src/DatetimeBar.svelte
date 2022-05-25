@@ -10,12 +10,15 @@
 
 	export let entity: IEntity = undefined;
 	export let hass: IHass = undefined;
+	export let shownames: boolean = undefined;
 
 	// exported for testing purpose
 	export let callServiceButtonFactory = () =>
 		document.createElement("ha-call-service-button");
 
 	$: bar_color = state >= max ? "#df4c1e" : "#0da035";
+	$: bar_height = shownames && !!friendlyName ? 18 : 3;
+	$: friendlyName = hass?.states[entity?.id]?.attributes?.friendly_name;
 	$: bar_width = Math.min(Math.abs((100 * state) / max), 100);
 	$: icon = hass?.states[entity?.id]?.attributes?.icon;
 	$: icon_color = state >= max ? "#df4c1e" : "#44739e";
@@ -49,13 +52,24 @@
 		<ha-icon data-testid="icon" {icon} style:color={icon_color} />
 	{/if}
 
-	<div class="external-bar">
+	<div class="external-bar" style:height="{bar_height}px">
 		<div
 			data-testid="internal-bar"
 			class="internal-bar"
 			style:width="{bar_width}%"
+			style:height="{bar_height}px"
 			style:background={bar_color}
 		/>
+
+		{#if shownames && !!friendlyName}
+			<div
+				data-testid="friendly-name"
+				class="friendly-name"
+				style:filter="drop-shadow(1px 1px 1px {bar_color})"
+			>
+				{friendlyName}
+			</div>
+		{/if}
 	</div>
 
 	<div class="value">{state} days</div>
@@ -69,6 +83,7 @@
 	}
 
 	.external-bar {
+		position: relative;
 		height: 3px;
 		background: #a0dea0;
 		flex-grow: 1;
@@ -78,6 +93,17 @@
 		width: 0%;
 		height: 3px;
 		max-width: 100%;
+	}
+
+	.friendly-name {
+		position: absolute;
+		top: 0;
+		margin-left: 3px;
+		color: white;
+		width: 100%;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
 	}
 
 	.value {

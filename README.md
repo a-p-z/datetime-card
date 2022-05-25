@@ -25,10 +25,12 @@ lovelace:
 - Use the visual or the code editor to configure your card, as below
 
 ![configuration](https://raw.githubusercontent.com/a-p-z/datetime-card/main/images/configuration.png "Configuration")
+
 ```yaml
 type: custom:datetime-card
 title: Chinese money
 image: /local/plant_chinese_money.png
+show_names: false
 entities:
   - id: input_datetime.plant_chinese_money_w
     max: 9

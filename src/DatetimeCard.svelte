@@ -25,12 +25,14 @@
 	export function setConfig(config: IConfig): void {
 		entities = config.entities;
 		header = config.title !== undefined ? config.title : DEFAULT_TITLE;
+		shownames = config.show_names || false;
 		src = config.image !== undefined ? config.image : DEFAULT_SRC;
 	}
 
 	$: entities = entities || getDefaultEntities(hass);
 
 	let header: string;
+	let shownames: boolean;
 	let src: string;
 </script>
 
@@ -45,7 +47,7 @@
 		{/if}
 		<div class="datetime-bars">
 			{#each entities as entity}
-				<datetime-bar role="listitem" {entity} {hass} />
+				<datetime-bar role="listitem" {entity} {hass} {shownames} />
 			{/each}
 		</div>
 	</div>

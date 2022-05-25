@@ -74,10 +74,11 @@ describe('DatetimeCardEditor.svelte', () => {
 
         expect(detail).toEqual({
             config: {
+                entities: [{ "id": "input_datetime_test_1", "max": 10 }],
                 image: "",
+                show_names: false,
                 title: "My Datetime Card",
                 type: "custom:datetime-card",
-                entities: [{ "id": "input_datetime_test_1", "max": 10 }]
             }
         });
         target.removeEventListener("config-changed", listener);
@@ -96,10 +97,34 @@ describe('DatetimeCardEditor.svelte', () => {
 
         expect(detail).toEqual({
             config: {
+                entities: [{ "id": "input_datetime_test_1", "max": 10 }],
                 image: "/local/image.png",
+                show_names: false,
                 title: "",
                 type: "custom:datetime-card",
-                entities: [{ "id": "input_datetime_test_1", "max": 10 }]
+            }
+        });
+        target.removeEventListener("config-changed", listener);
+    });
+
+    test("when show names changes config should change", async () => {
+        const target = document.createElement("input");
+        target.checked = true;
+        const listener = (event: Event) => detail = (<any>event).detail;
+        let detail: any;
+        target.addEventListener("config-changed", listener);
+        const { component } = render(DatetimeCardEditor);
+        await component.setConfig({ entities: [{ id: "input_datetime_test_1", max: 10 }] });
+
+        component.showNamesChanged({ target })
+
+        expect(detail).toEqual({
+            config: {
+                entities: [{ "id": "input_datetime_test_1", "max": 10 }],
+                image: "",
+                show_names: true,
+                title: "",
+                type: "custom:datetime-card",
             }
         });
         target.removeEventListener("config-changed", listener);
@@ -119,16 +144,17 @@ describe('DatetimeCardEditor.svelte', () => {
 
         expect(detail).toEqual({
             config: {
+                entities: [{ "id": "input_datetime_test_1", "max": 20 }],
                 image: "",
+                show_names: false,
                 title: "",
                 type: "custom:datetime-card",
-                entities: [{ "id": "input_datetime_test_1", "max": 20 }]
             }
         });
         target.removeEventListener("config-changed", listener);
     });
 
-    test("when max changes config should change", async () => {
+    test("when id changes config should change", async () => {
         const target = document.createElement("input");
         target.setAttribute("index", "0");
         target.value = "input_datetime_test_2";
@@ -142,10 +168,11 @@ describe('DatetimeCardEditor.svelte', () => {
 
         expect(detail).toEqual({
             config: {
+                entities: [{ "id": "input_datetime_test_2", "max": 10 }],
                 image: "",
+                show_names: false,
                 title: "",
                 type: "custom:datetime-card",
-                entities: [{ "id": "input_datetime_test_2", "max": 10 }]
             }
         });
         target.removeEventListener("config-changed", listener);
@@ -165,10 +192,11 @@ describe('DatetimeCardEditor.svelte', () => {
         expect(getByTestId("max-0")).toHaveAttribute("value", "20");
         expect(detail).toEqual({
             config: {
+                entities: [{ "id": "input_datetime_test_2", "max": 20, }],
                 image: "",
+                show_names: false,
                 title: "",
                 type: "custom:datetime-card",
-                entities: [{ "id": "input_datetime_test_2", "max": 20, }]
             }
         });
         removeEventListener("config-changed", listener);
@@ -186,10 +214,11 @@ describe('DatetimeCardEditor.svelte', () => {
         expect(queryByTestId("delete-1")).toBeInTheDocument();
         expect(detail).toEqual({
             config: {
+                entities: [{ "id": "", "max": 0, }, { "id": "", "max": 0, }],
                 image: "",
+                show_names: false,
                 title: "",
                 type: "custom:datetime-card",
-                entities: [{ "id": "", "max": 0, }, { "id": "", "max": 0, }]
             }
         });
         removeEventListener("config-changed", listener);

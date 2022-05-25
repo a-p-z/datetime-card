@@ -5,6 +5,7 @@
 
 	export function setConfig(config: IConfig): void {
 		entities = config.entities || [{ id: "", max: 0 }];
+		show_names = config.show_names || false;
 		image = config.image || "";
 		title = config.title || "";
 	}
@@ -18,6 +19,12 @@
 	// exported for testing purpose
 	export function imageChanged($event: Event): void {
 		image = ($event.target as HTMLInputElement).value;
+		configChanged($event);
+	}
+
+	// exported for testing purpose
+	export function showNamesChanged($event: Event): void {
+		show_names = ($event.target as HTMLInputElement).checked;
 		configChanged($event);
 	}
 
@@ -54,7 +61,15 @@
 			composed: true,
 		});
 
-		(<any>event).detail = { config: { entities, image, title, type } };
+		(<any>event).detail = {
+			config: {
+				entities,
+				image,
+				show_names,
+				title,
+				type,
+			},
+		};
 		target.dispatchEvent(event);
 	}
 
@@ -76,6 +91,7 @@
 
 	let entities: IEntity[] = [];
 	let image: string;
+	let show_names: boolean;
 	let title: string;
 </script>
 
@@ -92,6 +108,16 @@
 	value={image}
 	on:input={imageChanged}
 />
+
+<div class="switches">
+	<ha-switch
+		id="show-names-switch"
+		checked={show_names}
+		on:change={showNamesChanged}
+	/>
+	<!-- svelte-ignore a11y-label-has-associated-control -->
+	<label htmlfor="show-names-switch">Show names</label>
+</div>
 
 <h3>Entities (required)</h3>
 
@@ -142,6 +168,11 @@
 	ha-textfield {
 		margin-top: 3px;
 		margin-bottom: 5px;
+	}
+
+	.switches {
+		margin-top: 10px;
+		margin-top: 15px;
 	}
 
 	.entity {

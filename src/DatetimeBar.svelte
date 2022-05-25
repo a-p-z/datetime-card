@@ -47,7 +47,13 @@
 	}
 </script>
 
-<div data-testid="content" class="content" use:hold on:hold={resetDate}>
+<div
+	data-testid="content"
+	class="content"
+	use:hold
+	on:hold={resetDate}
+	title="hold to reset"
+>
 	{#if !!icon}
 		<ha-icon
 			data-testid="icon"

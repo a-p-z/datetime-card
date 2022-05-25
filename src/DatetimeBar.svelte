@@ -49,7 +49,12 @@
 
 <div data-testid="content" class="content" use:hold on:hold={resetDate}>
 	{#if !!icon}
-		<ha-icon data-testid="icon" {icon} style:color={icon_color} />
+		<ha-icon
+			data-testid="icon"
+			{icon}
+			style:color={icon_color}
+			title={hass?.states[entity?.id].attributes?.friendly_name}
+		/>
 	{/if}
 
 	<div class="external-bar" style:height="{bar_height}px">

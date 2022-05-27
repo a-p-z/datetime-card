@@ -45,5 +45,4 @@ entities:
 - reset date: just press and hold down the mouse button on the bar or on the days label to reset the entity to the current date.
 
 ## TODO
-- [ ] Add autocomplete in the editor for entities
 - [ ] Add dnd in the editor for entities

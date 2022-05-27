@@ -1,6 +1,6 @@
-import { hold } from "../actions";
+import { hold } from "../../actions/hold";
 
-describe('actions', () => {
+describe('hold', () => {
     const startingEvents = [
         new MouseEvent("mousedown"),
         new TouchEvent("touchstart")];
@@ -13,54 +13,47 @@ describe('actions', () => {
         new TouchEvent("touchmove")
     ];
 
-    let div;
+    const listener = () => holded = true;
+
+    let element: HTMLElement;
+    let holded: boolean;
+    let destroy: () => void;
 
     beforeEach(() => {
-        div = document.createElement("div");
-        jest.spyOn(div, "dispatchEvent");
-        jest.spyOn(div, "removeEventListener");
-        jest.spyOn(div, "addEventListener");
-
         jest.useFakeTimers();
 
-        hold(div);
+        element = document.createElement("div");
+        element.addEventListener("hold", listener);
+
+        holded = false;
+        destroy = hold(element).destroy;
     });
 
     afterEach(() => {
+        element.removeEventListener("hold", listener)
+        destroy();
         jest.useRealTimers();
     });
 
     startingEvents.forEach((event) => {
         test(`when hold start due to ${event.type} and time advances by 500ms without any cancelling event`, () => {
-            let holded = false;
-            const listener = () => holded = true;
-            div.addEventListener("hold", listener);
-
-            hold(div);
-            div.dispatchEvent(event);
+            element.dispatchEvent(event);
             jest.advanceTimersByTime(500);
-            endingEvents.forEach((event) => div.dispatchEvent(event));
+            endingEvents.forEach((event) => element.dispatchEvent(event));
 
             expect(holded).toBeTruthy();
-            div.removeEventListener("hold", listener)
         });
     });
 
     startingEvents.forEach((startingEvemt) => {
         endingEvents.forEach((endingEvent) => {
             test(`when hold start due to ${startingEvemt.type} and ${endingEvent.type} is dispatched in 500ms`, () => {
-                let holded = false;
-                const listener = () => holded = true;
-                div.addEventListener("hold", listener);
-
-                hold(div);
-                div.dispatchEvent(startingEvemt);
+                element.dispatchEvent(startingEvemt);
                 jest.advanceTimersByTime(499);
-                div.dispatchEvent(endingEvent);
+                element.dispatchEvent(endingEvent);
                 jest.advanceTimersByTime(10);
 
                 expect(holded).toBeFalsy();
-                div.removeEventListener("hold", listener)
             });
         });
     });

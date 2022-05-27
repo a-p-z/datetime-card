@@ -1,7 +1,10 @@
 <svelte:options tag="datetime-card-editor" />
 
 <script lang="ts">
-	import type { IConfig, IEntity } from "./types";
+	import type { IAutocompleteItem, IConfig, IEntity, IHass } from "./types";
+	import { createEventDispatcher } from "./svelte";
+
+	export let hass: IHass = undefined;
 
 	export function setConfig(config: IConfig): void {
 		entities = config.entities || [{ id: "", max: 0 }];
@@ -10,157 +13,136 @@
 		title = config.title || "";
 	}
 
-	// exported for testing purpose
-	export function titleChanged($event: Event): void {
-		title = ($event.target as HTMLInputElement).value;
-		configChanged($event);
-	}
+	$: autocompleteItems = Object.keys(hass?.states || {})
+		.filter((entity_id) => entity_id.startsWith("input_datetime"))
+		.map((entity_id) => toAutocompleteItem(entity_id));
 
-	// exported for testing purpose
-	export function imageChanged($event: Event): void {
-		image = ($event.target as HTMLInputElement).value;
-		configChanged($event);
-	}
-
-	// exported for testing purpose
-	export function showNamesChanged($event: Event): void {
-		show_names = ($event.target as HTMLInputElement).checked;
-		configChanged($event);
-	}
-
-	// exported for testing purpose
-	export function maxChanged($event: Event): void {
-		const max = Number((<HTMLInputElement>$event.target).value);
-		const index = parseInt(
-			($event.target as HTMLInputElement).attributes["index"]?.value
-		);
-
-		if (!Number.isInteger(max) || max < 0) {
-			(<HTMLInputElement>$event.target).value =
-				entities[index].max.toString();
-			return;
-		}
-
-		entities = [...entities];
-		entities[index] = { ...entities[index], max };
-
-		configChanged($event);
-	}
-
-	// exported for testing purpose
-	export function idChanged($event: Event): void {
-		const id = ($event.target as HTMLInputElement).value;
-		const index = parseInt(
-			($event.target as HTMLInputElement).attributes["index"]?.value
-		);
-
-		entities = [...entities];
-		entities[index] = { ...entities[index], id };
-
-		configChanged($event);
-	}
-
-	function configChanged({ target }): void {
-		const type = "custom:datetime-card";
-		const event = new Event("config-changed", {
-			bubbles: true,
-			composed: true,
-		});
-
-		(<any>event).detail = {
-			config: {
-				entities,
-				image,
-				show_names,
-				title,
-				type,
-			},
-		};
-		target.dispatchEvent(event);
-	}
-
-	function splice($event: Event): void {
-		const index = parseInt(
-			($event.target as HTMLInputElement).attributes["index"].value
-		);
-
-		entities = [...entities];
-		entities.splice(index, 1);
-
-		configChanged($event);
-	}
-
-	function add($event: Event): void {
-		entities = [...entities, { id: "", max: 0 }];
-		configChanged($event);
-	}
+	const svelteDispatch = createEventDispatcher();
 
 	let entities: IEntity[] = [];
 	let image: string;
 	let show_names: boolean;
 	let title: string;
+
+	function dispatchConfigChanged(): void {
+		const type = "custom:datetime-card";
+		const config = { entities, image, show_names, title, type };
+		svelteDispatch("config-changed", { config });
+	}
+
+	function push(): void {
+		entities = [...entities, { id: "", max: 0 }];
+		dispatchConfigChanged();
+	}
+
+	function splice(index: number): void {
+		entities = [...entities];
+		entities.splice(index, 1);
+		dispatchConfigChanged();
+	}
+
+	function toAutocompleteItem(entity_id: string): IAutocompleteItem {
+		const primaryText = hass.states[entity_id].attributes.friendly_name;
+		const secondaryText = entity_id;
+		return { primaryText, secondaryText, value: entity_id };
+	}
+
+	function updateTitle($event: Event): void {
+		title = (<HTMLInputElement>$event.target).value;
+		dispatchConfigChanged();
+	}
+
+	function updateImage($event: Event): void {
+		image = (<HTMLInputElement>$event.target).value;
+		dispatchConfigChanged();
+	}
+
+	function updateShowNames($event: Event): void {
+		show_names = (<HTMLInputElement>$event.target).checked;
+		dispatchConfigChanged();
+	}
+
+	function updateId($event: CustomEvent, entity: IEntity): void {
+		entity.id = $event.detail.value;
+		dispatchConfigChanged();
+	}
+
+	function updateMax($event: Event, entity: IEntity): void {
+		const value = Number((<HTMLInputElement>$event.target).value);
+
+		if (!Number.isInteger(value) || value < 0) {
+			(<HTMLInputElement>$event.target).value = entity.max.toString();
+			return;
+		}
+
+		(<HTMLInputElement>$event.target).value = value.toString();
+		entity.max = value;
+		dispatchConfigChanged();
+	}
 </script>
 
 <ha-textfield
 	data-testid="title"
 	label="Title (optional)"
 	value={title}
-	on:input={titleChanged}
+	on:input={updateTitle}
 />
 
 <ha-textfield
 	data-testid="image"
 	label="Image (optional)"
 	value={image}
-	on:input={imageChanged}
+	on:input={updateImage}
 />
 
-<div class="switches">
+<section class="switches">
 	<ha-switch
-		id="show-names-switch"
+		aria-labelledby="show-names-switch-label"
 		checked={show_names}
-		on:change={showNamesChanged}
+		on:change={updateShowNames}
 	/>
-	<!-- svelte-ignore a11y-label-has-associated-control -->
-	<label htmlfor="show-names-switch">Show names</label>
-</div>
+	<label id="show-names-switch-label" for="show-names-switch"
+		>Show names</label
+	>
+</section>
 
 <h3>Entities (required)</h3>
 
-<div class="entities">
-	{#each entities as { id, max }, index}
+<section class="entities">
+	{#each entities as entity, index}
 		<div role="listitem" class="entity">
 			<ha-icon class="handle" icon="mdi:drag" />
-			<ha-textfield
-				data-testid="entity-{index}"
-				class="entity-textfield"
+
+			<datetime-card-autocomplete
+				data-testid="datetime-card-autocomplete-{index}"
 				label="Entity"
-				{index}
-				value={id}
-				on:input={idChanged}
+				items={autocompleteItems}
+				value={entity.id}
+				on:change={($event) => updateId($event, entity)}
 			/>
+
 			<ha-textfield
 				data-testid="max-{index}"
 				class="max-textfield"
 				label="Max"
-				{index}
-				value={max}
-				on:input={maxChanged}
+				value={entity.max}
+				on:input={($event) => updateMax($event, entity)}
 			/>
+
 			{#if entities.length > 1}
 				<ha-icon-button
 					data-testid="delete-{index}"
 					{index}
-					on:click={splice}
+					on:click={() => splice(index)}
 				>
 					<ha-icon icon="mdi:delete" {index} />
 				</ha-icon-button>
 			{/if}
 		</div>
 	{/each}
-</div>
+</section>
 <div class="plus">
-	<ha-icon-button data-testid="plus" class="plus" on:click={add}>
+	<ha-icon-button data-testid="plus" class="plus" on:click={push}>
 		<ha-icon icon="mdi:plus" />
 	</ha-icon-button>
 </div>
@@ -190,10 +172,6 @@
 	.handle {
 		padding-right: 8px;
 		cursor: move;
-	}
-
-	.entity-textfield {
-		flex-grow: 1;
 	}
 
 	.max-textfield {

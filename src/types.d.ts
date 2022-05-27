@@ -1,3 +1,9 @@
+export interface IAutocompleteItem {
+    primaryText: string;
+    secondaryText?: string;
+    value: string;
+}
+
 export interface IConfig {
     readonly type: string = "custom:datetime-card";
     entities?: IEntity[] = [];
@@ -5,10 +11,12 @@ export interface IConfig {
     title?: string;
     show_names: boolean;
 }
+
 export interface IEntity {
     id: string;
     max: number;
 }
+
 export interface IHass {
     states: { [key: string]: IState; };
 }

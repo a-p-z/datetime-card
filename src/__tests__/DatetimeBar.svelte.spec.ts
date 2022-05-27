@@ -1,6 +1,11 @@
 import { fireEvent, render } from "@testing-library/svelte";
 import '@testing-library/jest-dom';
 import DatetimeBar from '../DatetimeBar.svelte'
+import { setDatetimeServiceFactory } from "../hass";
+
+jest.mock("../hass");
+
+const setDatetimeServiceFactoryMock = setDatetimeServiceFactory as jest.MockedFunction<typeof setDatetimeServiceFactory>
 
 describe('DatetimeBar.svelte', () => {
     const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString().split("T")[0];
@@ -13,11 +18,6 @@ describe('DatetimeBar.svelte', () => {
     const xGreen = "#0da035";
     const friendly_name = "friendly name";
     const icon = "mdi:water";
-
-    test("callServiceButtonFactory should create a call service button", () => {
-        const { component } = render(DatetimeBar);
-        expect(component.callServiceButtonFactory()).toBeDefined;
-    });
 
     describe('when hass is undefined', () => {
         const entity = { id: "input_datetime_test", max: 10 };
@@ -269,24 +269,20 @@ describe('DatetimeBar.svelte', () => {
         });
 
         test("when hold state should be reset", async () => {
-            const callServiceButton = document.createElement("ha-call-service-button") as any;
-            callServiceButton.buttonTapped = jest.fn(() => {
-                hass.states[callServiceButton.serviceData.entity_id].state = callServiceButton.serviceData.date;
-            });
-            const { getByTestId } = render(DatetimeBar, { entity, hass, callServiceButtonFactory: () => callServiceButton });
+            const element = document.createElement("ha-call-service-button") as any;
+            element.buttonTapped = jest.fn();
+            const { getByTestId } = render(DatetimeBar, { entity, hass });
+            setDatetimeServiceFactoryMock.mockReturnValue(element);
+
             await fireEvent(getByTestId("content"), new CustomEvent("hold"));
-            expect(callServiceButton.hass).toEqual(hass);
-            expect(callServiceButton.confirmation).toEqual("Do you want to reset friendly name?");
-            expect(callServiceButton.domain).toEqual("input_datetime");
-            expect(callServiceButton.service).toEqual("set_datetime");
-            expect(callServiceButton.serviceData).toEqual({ entity_id: "input_datetime_test", date: new Date().toISOString().split("T")[0] });
-            expect(callServiceButton).toHaveStyle("display: none");
-            expect(callServiceButton.buttonTapped).toHaveBeenCalled();
+
+            expect(setDatetimeServiceFactoryMock).toBeCalledWith(hass, "Do you want to reset friendly name?", "input_datetime_test", expect.anything());
+            expect(element.buttonTapped).toBeCalled();
         });
 
         test("friendly-name should contain 'friendly name'", () => {
             const { getByTestId } = render(DatetimeBar, { entity, hass, shownames: true });
-            expect(getByTestId("friendly-name")).toHaveStyle(`filter: drop-shadow(1px 1px 1px ${xGreen})`);
+            expect(getByTestId("friendly-name")).toHaveStyle(`filter: drop-shadow(1px 1px 1px ${xRed})`);
         });
     });
 

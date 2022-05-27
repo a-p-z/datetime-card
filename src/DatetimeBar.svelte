@@ -6,15 +6,12 @@
 
 <script lang="ts">
 	import type { IEntity, IHass } from "./types";
-	import { hold } from "./actions";
+	import { hold } from "./actions/hold";
+	import { setDatetimeServiceFactory } from "./hass";
 
 	export let entity: IEntity = undefined;
 	export let hass: IHass = undefined;
 	export let shownames: boolean = undefined;
-
-	// exported for testing purpose
-	export let callServiceButtonFactory = () =>
-		document.createElement("ha-call-service-button");
 
 	$: bar_color = state >= max ? "#df4c1e" : "#0da035";
 	$: bar_height = shownames && !!friendlyName ? 18 : 3;
@@ -34,13 +31,13 @@
 		const friendly_name = hass.states[entity.id].attributes.friendly_name;
 		const entity_id = entity.id;
 		const date = new Date().toISOString().split("T")[0];
-		const element = callServiceButtonFactory();
-		(<any>element).hass = hass;
-		(<any>element).confirmation = `Do you want to reset ${friendly_name}?`;
-		(<any>element).domain = "input_datetime";
-		(<any>element).service = "set_datetime";
-		(<any>element).serviceData = { entity_id, date };
-		element.style.display = "none";
+		const confirmation = `Do you want to reset ${friendly_name}?`;
+		const element = setDatetimeServiceFactory(
+			hass,
+			confirmation,
+			entity_id,
+			date
+		);
 		(<any>$event.target).appendChild(element);
 		(<any>element).buttonTapped();
 		(<any>$event.target).removeChild(element);

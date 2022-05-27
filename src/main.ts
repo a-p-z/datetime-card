@@ -1,8 +1,9 @@
 import DatetimeCard from './DatetimeCard.svelte'
 
-export * from './DatetimeCard.svelte'
-export * from './DatetimeCardEditor.svelte'
 export * from './DatetimeBar.svelte'
+export * from './DatetimeCard.svelte'
+export * from './DatetimeCardAutocomplete.svelte'
+export * from './DatetimeCardEditor.svelte'
 
 declare global {
     interface Window {

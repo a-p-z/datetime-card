@@ -130,7 +130,7 @@ describe('DatetimeCardEditor.svelte', () => {
         target.removeEventListener("config-changed", listener);
     });
 
-    test("when max changes config should change", async () => {
+    test("when max changes with a valid value config should change", async () => {
         const target = document.createElement("input");
         target.setAttribute("index", "0");
         target.value = "20";
@@ -152,6 +152,18 @@ describe('DatetimeCardEditor.svelte', () => {
             }
         });
         target.removeEventListener("config-changed", listener);
+    });
+
+    test("when max changes with not a valid value config should change", async () => {
+        const target = document.createElement("input");
+        target.setAttribute("index", "0");
+        target.value = "1a0";
+        const { component } = render(DatetimeCardEditor);
+        await component.setConfig({ entities: [{ id: "input_datetime_test_1", max: 10 }] });
+
+        component.maxChanged({ target })
+
+        expect(target.value).toEqual("10");
     });
 
     test("when id changes config should change", async () => {

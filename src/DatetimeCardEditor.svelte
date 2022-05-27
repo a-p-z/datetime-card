@@ -30,10 +30,16 @@
 
 	// exported for testing purpose
 	export function maxChanged($event: Event): void {
-		const max = parseInt(($event.target as HTMLInputElement).value);
+		const max = Number((<HTMLInputElement>$event.target).value);
 		const index = parseInt(
 			($event.target as HTMLInputElement).attributes["index"]?.value
 		);
+
+		if (!Number.isInteger(max) || max < 0) {
+			(<HTMLInputElement>$event.target).value =
+				entities[index].max.toString();
+			return;
+		}
 
 		entities = [...entities];
 		entities[index] = { ...entities[index], max };

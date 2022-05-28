@@ -1,6 +1,6 @@
 {
   "name": "datetime-card",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A minimalistic card for Home Assistant Lovelace UI which shows how many days it has been between any input_datetime and today.",
   "author": {
     "email": "antpza@gmail.com",
@@ -9,8 +9,6 @@
   },
   "scripts": {
     "build": "rollup -c",
-    "dev": "rollup -c -w",
-    "start": "sirv public --no-clear",
     "check": "svelte-check --tsconfig ./tsconfig.json",
     "test": "jest src",
     "test:watch": "npm run test -- --watch",
@@ -41,7 +39,6 @@
     "typescript": "^4.6.4"
   },
   "dependencies": {
-    "sirv-cli": "^2.0.0",
     "svelte-dnd-action": "^0.9.18"
   },
   "repository": {

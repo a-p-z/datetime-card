@@ -4,9 +4,6 @@ import resolve from '@rollup/plugin-node-resolve';
 import { terser } from 'rollup-plugin-terser';
 import sveltePreprocess from 'svelte-preprocess';
 import typescript from '@rollup/plugin-typescript';
-import css from 'rollup-plugin-css-only';
-
-const production = !process.env.ROLLUP_WATCH;
 
 export default {
 	input: 'src/main.ts',
@@ -18,36 +15,12 @@ export default {
 	},
 	plugins: [
 		svelte({
-			preprocess: sveltePreprocess({ sourceMap: !production }),
-			compilerOptions: {
-				customElement: true,
-				// enable run-time checks when not in production
-				dev: !production
-			}
+			preprocess: sveltePreprocess({ sourceMap: true }),
+			compilerOptions: { customElement: true, dev: true }
 		}),
-		// we'll extract any component CSS out into
-		// a separate file - better for performance
-		css({ output: 'datetime-card.css' }),
-
-		// If you have external dependencies installed from
-		// npm, you'll most likely need these plugins. In
-		// some cases you'll need additional configuration -
-		// consult the documentation for details:
-		// https://github.com/rollup/plugins/tree/master/packages/commonjs
-		resolve({
-			dedupe: ['svelte']
-		}),
+		resolve({ dedupe: ['svelte'] }),
 		commonjs(),
-		typescript({
-			sourceMap: !production,
-			inlineSources: !production
-		}),
-
-		// If we're building for production (npm run build
-		// instead of npm run dev), minify
-		production && terser()
-	],
-	watch: {
-		clearScreen: false
-	}
+		typescript({ sourceMap: true, inlineSources: true }),
+		terser()
+	]
 };

@@ -31,6 +31,7 @@ type: custom:datetime-card
 title: Chinese money
 image: /local/plant_chinese_money.png
 show_names: false
+flex_direction: row
 entities:
   - id: input_datetime.plant_chinese_money_w
     max: 9

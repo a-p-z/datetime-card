@@ -12,6 +12,8 @@
 	export function setConfig(config: IConfig): void {
 		draggableEntities = toDraggableEntities(config.entities);
 		show_names = config.show_names || false;
+		column = config.flex_direction?.includes("column");
+		reverse = config.flex_direction?.includes("reverse");
 		image = config.image || "";
 		title = config.title || "";
 	}
@@ -24,6 +26,8 @@
 	const flipDurationMs = 200;
 	const svelteDispatch = createEventDispatcher();
 
+	let column = false;
+	let reverse = false;
 	let key = 0;
 	let draggableEntities: DraggableEntity[] = [new DraggableEntity(newKey())];
 	let dragDisabled = true;
@@ -38,7 +42,16 @@
 	function dispatchConfigChanged(): void {
 		const type = "custom:datetime-card";
 		const entities = draggableEntities.map(toEntity);
-		const config = { entities, image, show_names, title, type };
+		const flex_direction =
+			(column ? "column" : "row") + (reverse ? "-reverse" : "");
+		const config = {
+			entities,
+			flex_direction,
+			image,
+			show_names,
+			title,
+			type,
+		};
 		svelteDispatch("config-changed", { config });
 	}
 
@@ -108,23 +121,18 @@
 		return { id, max: parseInt(max) || 0 };
 	}
 
-	function updateTitle($event: Event): void {
-		title = (<HTMLInputElement>$event.target).value;
-		dispatchConfigChanged();
-	}
-
-	function updateImage($event: Event): void {
-		image = (<HTMLInputElement>$event.target).value;
-		dispatchConfigChanged();
-	}
-
-	function updateShowNames($event: Event): void {
-		show_names = (<HTMLInputElement>$event.target).checked;
+	function updateColumn($event: Event): void {
+		column = (<HTMLInputElement>$event.target).checked;
 		dispatchConfigChanged();
 	}
 
 	function updateId($event: CustomEvent, entity: DraggableEntity): void {
 		entity.id = $event.detail.value;
+		dispatchConfigChanged();
+	}
+
+	function updateImage($event: Event): void {
+		image = (<HTMLInputElement>$event.target).value;
 		dispatchConfigChanged();
 	}
 
@@ -138,6 +146,21 @@
 
 		(<HTMLInputElement>$event.target).value = value.toString();
 		entity.max = value.toString();
+		dispatchConfigChanged();
+	}
+
+	function updateReverse($event: Event): void {
+		reverse = (<HTMLInputElement>$event.target).checked;
+		dispatchConfigChanged();
+	}
+
+	function updateShowNames($event: Event): void {
+		show_names = (<HTMLInputElement>$event.target).checked;
+		dispatchConfigChanged();
+	}
+
+	function updateTitle($event: Event): void {
+		title = (<HTMLInputElement>$event.target).value;
 		dispatchConfigChanged();
 	}
 </script>
@@ -158,13 +181,28 @@
 
 <section class="switches">
 	<ha-switch
-		aria-labelledby="show-names-switch-label"
+		id="show-names-switch"
+		aria-label="Show names"
 		checked={show_names}
 		on:change={updateShowNames}
 	/>
-	<label id="show-names-switch-label" for="show-names-switch"
-		>Show names</label
-	>
+	<label for="show-names-switch">Show names</label>
+
+	<ha-switch
+		id="column-switch"
+		aria-label="Column"
+		checked={column}
+		on:change={updateColumn}
+	/>
+	<label for="column-switch">Column</label>
+
+	<ha-switch
+		id="reverse-switch"
+		aria-label="Reverse"
+		checked={reverse}
+		on:change={updateReverse}
+	/>
+	<label for="reverse-switch">Reverse</label>
 </section>
 
 <h3>Entities (required)</h3>
@@ -244,6 +282,10 @@
 	.switches {
 		margin-top: 10px;
 		margin-top: 15px;
+	}
+
+	ha-switch {
+		margin-left: 30px;
 	}
 
 	.entity {

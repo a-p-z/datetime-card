@@ -68,6 +68,7 @@ describe('DatetimeCardEditor.svelte', () => {
                 expect(eventDispatcher).toHaveBeenCalledWith("config-changed", {
                     config: {
                         entities: [{ "id": "", "max": 0 }],
+                        flex_direction: "row",
                         image: "",
                         show_names: false,
                         title: "My Datetime Card",
@@ -84,6 +85,7 @@ describe('DatetimeCardEditor.svelte', () => {
                 expect(eventDispatcher).toHaveBeenCalledWith("config-changed", {
                     config: {
                         entities: [{ id: "", max: 0 },],
+                        flex_direction: "row",
                         image: "/local/image.png",
                         show_names: false,
                         type: "custom:datetime-card",
@@ -100,8 +102,62 @@ describe('DatetimeCardEditor.svelte', () => {
                 expect(eventDispatcher).toHaveBeenCalledWith("config-changed", {
                     config: {
                         entities: [{ id: "", max: 0 },],
+                        flex_direction: "row",
                         image: "",
                         show_names: true,
+                        type: "custom:datetime-card",
+                        title: ""
+                    }
+                });
+            });
+
+            test("when column changes config should change", async () => {
+                getByLabelText("Column").checked = true;
+
+                await fireEvent.change(getByLabelText("Column"));
+
+                expect(eventDispatcher).toHaveBeenCalledWith("config-changed", {
+                    config: {
+                        entities: [{ id: "", max: 0 },],
+                        flex_direction: "column",
+                        image: "",
+                        show_names: false,
+                        type: "custom:datetime-card",
+                        title: ""
+                    }
+                });
+            });
+
+            test("when reverse changes config should change", async () => {
+                getByLabelText("Reverse").checked = true;
+
+                await fireEvent.change(getByLabelText("Reverse"));
+
+                expect(eventDispatcher).toHaveBeenCalledWith("config-changed", {
+                    config: {
+                        entities: [{ id: "", max: 0 },],
+                        flex_direction: "row-reverse",
+                        image: "",
+                        show_names: false,
+                        type: "custom:datetime-card",
+                        title: ""
+                    }
+                });
+            });
+
+            test("when column and reverse change config should change", async () => {
+                getByLabelText("Column").checked = true;
+                getByLabelText("Reverse").checked = true;
+
+                await fireEvent.change(getByLabelText("Column"));
+                await fireEvent.change(getByLabelText("Reverse"));
+
+                expect(eventDispatcher).toHaveBeenCalledWith("config-changed", {
+                    config: {
+                        entities: [{ id: "", max: 0 },],
+                        flex_direction: "column-reverse",
+                        image: "",
+                        show_names: false,
                         type: "custom:datetime-card",
                         title: ""
                     }
@@ -133,6 +189,20 @@ describe('DatetimeCardEditor.svelte', () => {
             await component.setConfig({ show_names: true });
 
             expect(getByLabelText("Show names")).toHaveAttribute("checked", "true");
+        });
+
+        [{ flex_direction: "column", column: "true", reverse: "false" },
+        { flex_direction: "row", column: "false", reverse: "false" },
+        { flex_direction: "column-reverse", column: "true", reverse: "true" },
+        { flex_direction: "row-reverse", column: "false", reverse: "true" }
+        ].forEach(({ flex_direction, column, reverse }) => {
+            test(`when flex_direction is ${flex_direction}`, async () => {
+                const config = { flex_direction };
+                await component.setConfig(config);
+
+                expect(getByLabelText("Column")).toHaveAttribute("checked", column);
+                expect(getByLabelText("Reverse")).toHaveAttribute("checked", reverse);
+            });
         });
 
         describe("when config.entities is not empty", () => {
@@ -175,6 +245,7 @@ describe('DatetimeCardEditor.svelte', () => {
                 expect(eventDispatcher).toHaveBeenCalledWith("config-changed", {
                     config: {
                         entities: [{ id: "input_datetime.test", "max": 10 }, entity2],
+                        flex_direction: "row",
                         image: "",
                         show_names: false,
                         title: "",
@@ -191,6 +262,7 @@ describe('DatetimeCardEditor.svelte', () => {
                 expect(eventDispatcher).toHaveBeenCalledWith("config-changed", {
                     config: {
                         entities: [{ "id": "input_datetime.test_1", "max": 20 }, entity2],
+                        flex_direction: "row",
                         image: "",
                         show_names: false,
                         title: "",
@@ -213,6 +285,7 @@ describe('DatetimeCardEditor.svelte', () => {
                 expect(eventDispatcher).toHaveBeenCalledWith("config-changed", {
                     config: {
                         entities: [{ "id": "input_datetime.test_2", "max": 20, }],
+                        flex_direction: "row",
                         image: "",
                         show_names: false,
                         title: "",
@@ -231,6 +304,7 @@ describe('DatetimeCardEditor.svelte', () => {
                 expect(eventDispatcher).toHaveBeenCalledWith("config-changed", {
                     config: {
                         entities: [],
+                        flex_direction: "row",
                         image: "",
                         show_names: false,
                         title: "",

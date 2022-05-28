@@ -7,6 +7,7 @@ export interface IAutocompleteItem {
 export interface IConfig {
     readonly type: string = "custom:datetime-card";
     entities?: IEntity[] = [];
+    flex_direction: "column" | "row" | "column-reverse" | "row-reverse";
     image?: string;
     title?: string;
     show_names: boolean;

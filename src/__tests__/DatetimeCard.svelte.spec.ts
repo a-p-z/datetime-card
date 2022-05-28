@@ -37,6 +37,13 @@ describe('DatetimeCard.svelte', () => {
             await component.setConfig(config);
             expect(getAllByRole("listitem")).toHaveLength(1);
         });
+
+        test("flex_direction should be row", async () => {
+            const hass = { states: { input_datetime_test: { state: "2022-05-11" } } };
+            const { component, getByTestId } = render(DatetimeCard, { hass });
+            await component.setConfig(config);
+            expect(getByTestId("card-content")).toHaveStyle("flex-direction: row");
+        });
     });
 
     test("when config.title is defined title should be in the document", async () => {
@@ -49,6 +56,12 @@ describe('DatetimeCard.svelte', () => {
         const { component, getByAltText } = render(DatetimeCard);
         await component.setConfig({ type: "custom:datetime-card", image: "/local/my-image.png" })
         expect(getByAltText('card-pict')).toHaveAttribute("src", "/local/my-image.png");
+    });
+
+    test("when config.flex_direction is defined the style should be applied", async () => {
+        const { component, getByTestId } = render(DatetimeCard);
+        await component.setConfig({ flex_direction: "column" });
+        expect(getByTestId("card-content")).toHaveStyle("flex-direction: column");
     });
 
     test("when config.title is empty title should not be in the document", async () => {

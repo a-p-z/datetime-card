@@ -27,11 +27,13 @@
 		entities = config.entities;
 		header = config.title !== undefined ? config.title : DEFAULT_TITLE;
 		shownames = config.show_names || false;
+		flex_direction = config.flex_direction || "row";
 		src = config.image !== undefined ? config.image : DEFAULT_SRC;
 	}
 
 	$: entities = entities || getDefaultEntities(hass);
 
+	let flex_direction = "row";
 	let header: string;
 	let shownames: boolean;
 	let src: string;
@@ -42,10 +44,15 @@
 		<h1 class="card-header">{header}</h1>
 	{/if}
 
-	<div class="card-content">
+	<div
+		data-testid="card-content"
+		class="card-content"
+		style:flex-direction={flex_direction}
+	>
 		{#if !!src}
 			<img {src} alt="card-pict" />
 		{/if}
+
 		<div class="grid">
 			{#each entities as entity}
 				<datetime-icon role="listitem" {entity} {hass} />
@@ -72,16 +79,17 @@
 	}
 
 	img {
-		max-width: 50%;
+		max-width: 40%;
 	}
 
 	.grid {
 		display: grid;
 		flex-grow: 1;
 		grid-template-columns: 24px auto min-content;
-		margin-left: 5px;
+		margin: 10px;
 		gap: 10px;
 		align-items: center;
+		width: 100%;
 	}
 
 	datetime-label {

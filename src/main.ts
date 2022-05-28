@@ -1,4 +1,5 @@
 import DatetimeCard from './DatetimeCard.svelte'
+import { overrideItemIdKeyNameBeforeInitialisingDndZones } from "svelte-dnd-action";
 
 export * from './DatetimeBar.svelte'
 export * from './DatetimeCard.svelte'
@@ -20,3 +21,4 @@ window.customCards.push({
 });
 
 (<any>DatetimeCard).getConfigElement = () => document.createElement("datetime-card-editor");
+overrideItemIdKeyNameBeforeInitialisingDndZones("key");

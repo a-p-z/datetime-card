@@ -3,11 +3,14 @@
 <script lang="ts">
 	import type { IAutocompleteItem, IConfig, IEntity, IHass } from "./types";
 	import { createEventDispatcher } from "./svelte";
+	import { dndzone } from "svelte-dnd-action";
+	import { DraggableEntity } from "./draggable-entity";
+	import { flip } from "svelte/animate";
 
 	export let hass: IHass = undefined;
 
 	export function setConfig(config: IConfig): void {
-		entities = config.entities || [{ id: "", max: 0 }];
+		draggableEntities = toDraggableEntities(config.entities);
 		show_names = config.show_names || false;
 		image = config.image || "";
 		title = config.title || "";
@@ -17,34 +20,92 @@
 		.filter((entity_id) => entity_id.startsWith("input_datetime"))
 		.map((entity_id) => toAutocompleteItem(entity_id));
 
+	const dropTargetStyle = { outline: "var(--primary-color) solid 2px" };
+	const flipDurationMs = 200;
 	const svelteDispatch = createEventDispatcher();
 
-	let entities: IEntity[] = [];
+	let key = 0;
+	let draggableEntities: DraggableEntity[] = [new DraggableEntity(newKey())];
+	let dragDisabled = true;
 	let image: string;
 	let show_names: boolean;
 	let title: string;
 
+	function consider($event: any): void {
+		draggableEntities = $event.detail.items;
+	}
+
 	function dispatchConfigChanged(): void {
 		const type = "custom:datetime-card";
+		const entities = draggableEntities.map(toEntity);
 		const config = { entities, image, show_names, title, type };
 		svelteDispatch("config-changed", { config });
 	}
 
-	function push(): void {
-		entities = [...entities, { id: "", max: 0 }];
+	function finalize($event: CustomEvent): void {
+		draggableEntities = $event.detail.items;
+		dragDisabled = true;
 		dispatchConfigChanged();
 	}
 
-	function splice(index: number): void {
-		entities = [...entities];
-		entities.splice(index, 1);
+	function newKey(): number {
+		return key++;
+	}
+
+	function push(): void {
+		draggableEntities = [
+			...draggableEntities,
+			new DraggableEntity(newKey()),
+		];
+	}
+
+	function splice(_key: number): void {
+		draggableEntities = draggableEntities.filter(({ key }) => key !== _key);
 		dispatchConfigChanged();
+	}
+
+	function startDrag(): void {
+		if (draggableEntities.length < 2) {
+			return;
+		}
+
+		dragDisabled = false;
+	}
+
+	function stopDrag(): void {
+		dragDisabled = true;
 	}
 
 	function toAutocompleteItem(entity_id: string): IAutocompleteItem {
 		const primaryText = hass.states[entity_id].attributes.friendly_name;
 		const secondaryText = entity_id;
 		return { primaryText, secondaryText, value: entity_id };
+	}
+
+	function toDraggableEntities(entities: IEntity[]): DraggableEntity[] {
+		if (!entities) {
+			return [new DraggableEntity(newKey())];
+		}
+
+		if (entities.length !== draggableEntities.length) {
+			return entities.map(toDraggableEntity);
+		}
+
+		const result = [...draggableEntities];
+		for (let i = 0; i < entities.length; i++) {
+			const max = entities[i].max > 0 ? entities[i].max.toString() : "";
+			result[i].id = entities[i].id;
+			result[i].max = max;
+		}
+		return result;
+	}
+
+	function toDraggableEntity({ id, max }: IEntity): DraggableEntity {
+		return { id, key: newKey(), max: max > 0 ? max.toString() : "" };
+	}
+
+	function toEntity({ id, max }: DraggableEntity): IEntity {
+		return { id, max: parseInt(max) || 0 };
 	}
 
 	function updateTitle($event: Event): void {
@@ -62,21 +123,21 @@
 		dispatchConfigChanged();
 	}
 
-	function updateId($event: CustomEvent, entity: IEntity): void {
+	function updateId($event: CustomEvent, entity: DraggableEntity): void {
 		entity.id = $event.detail.value;
 		dispatchConfigChanged();
 	}
 
-	function updateMax($event: Event, entity: IEntity): void {
+	function updateMax($event: Event, entity: DraggableEntity): void {
 		const value = Number((<HTMLInputElement>$event.target).value);
 
 		if (!Number.isInteger(value) || value < 0) {
-			(<HTMLInputElement>$event.target).value = entity.max.toString();
+			(<HTMLInputElement>$event.target).value = entity.max;
 			return;
 		}
 
 		(<HTMLInputElement>$event.target).value = value.toString();
-		entity.max = value;
+		entity.max = value.toString();
 		dispatchConfigChanged();
 	}
 </script>
@@ -108,10 +169,33 @@
 
 <h3>Entities (required)</h3>
 
-<section class="entities">
-	{#each entities as entity, index}
-		<div role="listitem" class="entity">
-			<ha-icon class="handle" icon="mdi:drag" />
+<section
+	data-testid="entities"
+	class="entities"
+	use:dndzone={{
+		items: draggableEntities,
+		dragDisabled,
+		dropTargetStyle,
+		flipDurationMs,
+	}}
+	on:consider={consider}
+	on:finalize={finalize}
+>
+	{#each draggableEntities as entity, index (entity.key)}
+		<div
+			role="listitem"
+			class="entity"
+			animate:flip={{ duration: flipDurationMs }}
+		>
+			<ha-icon
+				data-testid="handle-{index}"
+				class="handle"
+				icon="mdi:drag"
+				on:mousedown={startDrag}
+				on:touchstart={startDrag}
+				on:mouseup={stopDrag}
+				on:touchend={stopDrag}
+			/>
 
 			<datetime-card-autocomplete
 				data-testid="datetime-card-autocomplete-{index}"
@@ -129,13 +213,12 @@
 				on:input={($event) => updateMax($event, entity)}
 			/>
 
-			{#if entities.length > 1}
+			{#if draggableEntities.length > 1}
 				<ha-icon-button
 					data-testid="delete-{index}"
-					{index}
-					on:click={() => splice(index)}
+					on:click={() => splice(entity.key)}
 				>
-					<ha-icon icon="mdi:delete" {index} />
+					<ha-icon icon="mdi:delete" />
 				</ha-icon-button>
 			{/if}
 		</div>
@@ -171,7 +254,8 @@
 
 	.handle {
 		padding-right: 8px;
-		cursor: move;
+		cursor: grab;
+		width: 32px;
 	}
 
 	.max-textfield {

@@ -8,7 +8,7 @@ Useful to remind you how many days it has been since you replaced your water fil
 ## Installation
 [![hacs_badge](https://img.shields.io/badge/HACS-Default-41BDF5.svg?style=for-the-badge)](https://github.com/hacs/integration)
 
-Or you can download [datetime-card.js](https://github.com/a-p-z/datetime-card/releases/download/1.0.0/datetime-card.js) to your `configuration/www` folder and cofigure Lovelace to load it:
+Or you can download [datetime-card.js](https://github.com/a-p-z/datetime-card/releases/latest) to your `configuration/www` folder and cofigure Lovelace to load it:
 ```yaml
 lovelace:
   mode: yaml

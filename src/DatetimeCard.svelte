@@ -1,18 +1,19 @@
 <svelte:options tag="datetime-card" />
 
 <script context="module" lang="ts">
-	const MS_IN_A_DAY = 1000 * 60 * 60 * 24;
+	import { getState } from "./datetime/datetime";
+
 	const DEFAULT_SRC =
 		"https://demo.home-assistant.io/stub_config/t-shirt-promo.png";
 	const DEFAULT_TITLE = "Datetime Card";
 
 	function getDefaultEntities(hass: IHass): IEntity[] {
 		const states = hass?.states || {};
-		const id = Object.keys(states).find((entity) =>
-			entity.startsWith("input_datetime")
+		const id = Object.keys(states).find((id) =>
+			id.startsWith("input_datetime")
 		);
-		const date = Date.parse(hass?.states[id]?.state) || Date.now();
-		const max = 2 * Math.floor((Date.now() - date) / MS_IN_A_DAY);
+
+		const max = 2 * getState(hass, { id } as IEntity);
 		return !!id ? [{ id, max }] : [];
 	}
 </script>
@@ -45,9 +46,13 @@
 		{#if !!src}
 			<img {src} alt="card-pict" />
 		{/if}
-		<div class="datetime-bars">
+		<div class="grid">
 			{#each entities as entity}
-				<datetime-bar role="listitem" {entity} {hass} {shownames} />
+				<datetime-icon role="listitem" {entity} {hass} />
+
+				<datetime-bar {entity} {hass} {shownames} />
+
+				<datetime-label {entity} {hass} />
 			{/each}
 		</div>
 	</div>
@@ -70,8 +75,16 @@
 		max-width: 50%;
 	}
 
-	.datetime-bars {
+	.grid {
+		display: grid;
 		flex-grow: 1;
+		grid-template-columns: 24px auto min-content;
 		margin-left: 5px;
+		gap: 10px;
+		align-items: center;
+	}
+
+	datetime-label {
+		justify-self: end;
 	}
 </style>

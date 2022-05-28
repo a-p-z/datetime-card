@@ -1,7 +1,9 @@
 import DatetimeCard from './DatetimeCard.svelte'
 import { overrideItemIdKeyNameBeforeInitialisingDndZones } from "svelte-dnd-action";
 
-export * from './DatetimeBar.svelte'
+export * from './datetime/DatetimeBar.svelte'
+export * from './datetime/DatetimeIcon.svelte'
+export * from './datetime/DatetimeLabel.svelte'
 export * from './DatetimeCard.svelte'
 export * from './DatetimeCardAutocomplete.svelte'
 export * from './DatetimeCardEditor.svelte'

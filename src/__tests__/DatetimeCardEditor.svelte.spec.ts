@@ -2,7 +2,7 @@ import { render, fireEvent } from "@testing-library/svelte";
 import '@testing-library/jest-dom';
 import DatetimeCardEditor from '../DatetimeCardEditor.svelte'
 import { createEventDispatcher } from "../svelte";
-import { tick } from "svelte";
+import type { IConfig, IEntity } from "../types";
 
 jest.mock("../svelte");
 
@@ -18,12 +18,12 @@ describe('DatetimeCardEditor.svelte', () => {
     describe('when hass is defined', () => {
         const hass = { states: { "input_datetime.test_1": { attributes: { friendly_name: "friendly name" } } } };
 
-        let component;
-        let getByTestId;
-        let getAllByRole;
-        let queryByTestId;
-        let getByLabelText;
-        let eventDispatcher;
+        let component: any;
+        let getByTestId: any;
+        let getAllByRole: any;
+        let queryByTestId: any;
+        let getByLabelText: any;
+        let eventDispatcher: any;
 
         beforeEach(() => {
             eventDispatcher = jest.fn();
@@ -136,14 +136,14 @@ describe('DatetimeCardEditor.svelte', () => {
         });
 
         describe("when config.entities is not empty", () => {
-            let entity1;
-            let entity2;
-            let config;
+            let entity1: IEntity;
+            let entity2: IEntity;
+            let config: IConfig;
 
             beforeEach(async () => {
                 entity1 = { id: "input_datetime.test_1", max: 10 };
                 entity2 = { id: "input_datetime.test_2", max: 20 };
-                config = { entities: [entity1, entity2] };
+                config = { entities: [entity1, entity2] } as IConfig;
 
                 await component.setConfig(config);
             });
@@ -159,7 +159,7 @@ describe('DatetimeCardEditor.svelte', () => {
             test("when set config a second time", async () => {
                 entity1 = { id: "input_datetime.test_1", max: 0 };
                 entity2 = { id: "input_datetime.test_2", max: 0 };
-                config = { entities: [entity1, entity2] };
+                config = { entities: [entity1, entity2] } as IConfig;
                 await component.setConfig(config);
 
                 expect(getAllByRole("listitem")).toHaveLength(2);

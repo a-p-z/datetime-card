@@ -19,6 +19,7 @@ export interface IEntity {
 }
 
 export interface IHass {
+    localize(message: string, params: any): string;
     states: { [key: string]: IState; };
 }
 

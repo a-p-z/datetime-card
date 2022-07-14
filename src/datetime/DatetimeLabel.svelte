@@ -8,7 +8,9 @@
 	export let entity: IEntity = undefined;
 	export let hass: IHass = undefined;
 
-	$: state = getState(hass, entity);
+	$: label = hass?.localize("ui.duration.day", {
+		count: getState(hass, entity),
+	});
 </script>
 
 <div
@@ -17,8 +19,7 @@
 	use:hold
 	on:hold={($event) => resetDate($event, hass, entity)}
 >
-	{state}
-	{"day" + (state !== 1 ? "s" : "")}
+	{label}
 </div>
 
 <style>

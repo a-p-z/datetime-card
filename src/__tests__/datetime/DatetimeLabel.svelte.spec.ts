@@ -10,7 +10,7 @@ const resetDateMock = resetDate as jest.MockedFunction<typeof resetDate>
 
 describe('DatetimeLabel.svelte', () => {
     const entity = {};
-    const hass = {};
+    const hass = { localize: (key: string, params: any) => `${params["count"]} ${key}` };
 
     test("when hass and entity are undefined", () => {
         expect(render(DatetimeLabel)).toBeDefined();
@@ -19,14 +19,14 @@ describe('DatetimeLabel.svelte', () => {
     test("when state is 1", () => {
         getStateMock.mockReturnValue(1);
         const { getByTestId } = render(DatetimeLabel, { entity, hass });
-        expect(getByTestId("days")).toHaveTextContent("1 day");
+        expect(getByTestId("days")).toHaveTextContent("1 ui.duration.day");
     });
 
     [0, 2, 3].forEach((state) => {
         test("when state is not 1", () => {
             getStateMock.mockReturnValue(state);
             const { getByTestId } = render(DatetimeLabel, { entity, hass });
-            expect(getByTestId("days")).toHaveTextContent(`${state} days`);
+            expect(getByTestId("days")).toHaveTextContent(`${state} ui.duration.day`);
         });
     });
 

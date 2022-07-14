@@ -1,7 +1,8 @@
 import { setDatetimeServiceFactory } from "../hass";
+import type { IHass } from "../types";
 
 describe("hass", () => {
-    const hass = { states: {} };
+    const hass = { localize: (key: string) => key, states: {} };
     const entity_id = "entity_id";
     const date = new Date().toISOString().split("T")[0];
 

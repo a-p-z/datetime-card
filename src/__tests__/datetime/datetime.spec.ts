@@ -7,8 +7,10 @@ jest.mock("../../hass");
 const setDatetimeServiceFactoryMock = setDatetimeServiceFactory as jest.MockedFunction<typeof setDatetimeServiceFactory>
 
 describe("datetime", () => {
-    const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString().split("T")[0];
-    const tenDaysAgo = new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString().split("T")[0];
+    const tzOffset = new Date().getTimezoneOffset() * 60000;
+    const localDateTime = Date.now() - tzOffset;
+    const yesterday = new Date(localDateTime - 24 * 60 * 60 * 1000).toISOString().split("T")[0];
+    const tenDaysAgo = new Date(localDateTime - 10 * 24 * 60 * 60 * 1000).toISOString().split("T")[0];
 
     [
         { hass: undefined, entity: undefined, expected: 0 },

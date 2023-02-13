@@ -46,7 +46,7 @@ entities:
 - reset date: just press and hold down the mouse button on the bar or on the days label to reset the entity to the current date.
 
 ## Notifications when items are expired
-Erkr wrote a PyScript: https://gist.github.com/erkr/45d6d82053d20001976b29e19ae2e7de. this script adds a service that looks-up all cards based on datetime-card. The script can parse a dashboard and evaluate all entities in datetime-cards. It checks if they exceed the max time configured. If that is the case, it sends a notification for each of them. You can simply call the script in a time-triggered automation (i.e. once a day at noon)
+Erkr wrote a PyScript: https://gist.github.com/erkr/45d6d82053d20001976b29e19ae2e7de. This script adds a service that looks-up all cards based on datetime-card. The script can parse a dashboard and evaluate all entities in datetime-cards. It checks if they exceed the max time configured. If that is the case, it sends a notification for each of them. You can simply call the script in a time-triggered automation (i.e. once a day at noon)
 
 Note: the script needs tailoring for 3 things:
 - the token variable: assign a 'long lived token' (can be created via your profile in the UI)

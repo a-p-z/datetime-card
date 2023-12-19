@@ -19,14 +19,14 @@ describe('DatetimeLabel.svelte', () => {
     test("when state is 1", () => {
         getStateMock.mockReturnValue(1);
         const { getByTestId } = render(DatetimeLabel, { entity, hass });
-        expect(getByTestId("days")).toHaveTextContent("1 ui.duration.day");
+        expect(getByTestId("days")).toHaveTextContent("1 days");
     });
 
     [0, 2, 3].forEach((state) => {
         test("when state is not 1", () => {
             getStateMock.mockReturnValue(state);
             const { getByTestId } = render(DatetimeLabel, { entity, hass });
-            expect(getByTestId("days")).toHaveTextContent(`${state} ui.duration.day`);
+            expect(getByTestId("days")).toHaveTextContent(`${state} days`);
         });
     });
 

@@ -1,5 +1,4 @@
 import { setDatetimeServiceFactory } from "../hass";
-import type { IHass } from "../types";
 
 describe("hass", () => {
     const hass = { localize: (key: string) => key, states: {} };

@@ -16,6 +16,7 @@ export interface IConfig {
 }
 
 export interface IEntity {
+    friendly_name?: string;
     id: string;
     max: number;
 }

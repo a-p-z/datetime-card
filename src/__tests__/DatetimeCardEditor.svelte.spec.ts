@@ -67,7 +67,7 @@ describe('DatetimeCardEditor.svelte', () => {
 
                 expect(eventDispatcher).toHaveBeenCalledWith("config-changed", {
                     config: {
-                        entities: [{ "id": "", "max": 0 }],
+                        entities: [{ friendly_name: "", id: "", max: 0 }],
                         flex_direction: "row",
                         image: "",
                         reset_forward: false,
@@ -86,7 +86,7 @@ describe('DatetimeCardEditor.svelte', () => {
 
                 expect(eventDispatcher).toHaveBeenCalledWith("config-changed", {
                     config: {
-                        entities: [{ id: "", max: 0 },],
+                        entities: [{ friendly_name: "", id: "", max: 0 }],
                         flex_direction: "row",
                         image: "/local/image.png",
                         reset_forward: false,
@@ -105,7 +105,7 @@ describe('DatetimeCardEditor.svelte', () => {
 
                 expect(eventDispatcher).toHaveBeenCalledWith("config-changed", {
                     config: {
-                        entities: [{ id: "", max: 0 },],
+                        entities: [{ friendly_name: "", id: "", max: 0 }],
                         flex_direction: "row",
                         image: "",
                         reset_forward: false,
@@ -124,7 +124,7 @@ describe('DatetimeCardEditor.svelte', () => {
 
                 expect(eventDispatcher).toHaveBeenCalledWith("config-changed", {
                     config: {
-                        entities: [{ id: "", max: 0 },],
+                        entities: [{ friendly_name: "", id: "", max: 0 }],
                         flex_direction: "column",
                         image: "",
                         reset_forward: false,
@@ -143,7 +143,7 @@ describe('DatetimeCardEditor.svelte', () => {
 
                 expect(eventDispatcher).toHaveBeenCalledWith("config-changed", {
                     config: {
-                        entities: [{ id: "", max: 0 },],
+                        entities: [{ friendly_name: "", id: "", max: 0 }],
                         flex_direction: "row-reverse",
                         image: "",
                         reset_forward: false,
@@ -164,7 +164,7 @@ describe('DatetimeCardEditor.svelte', () => {
 
                 expect(eventDispatcher).toHaveBeenCalledWith("config-changed", {
                     config: {
-                        entities: [{ id: "", max: 0 },],
+                        entities: [{ friendly_name: "", id: "", max: 0 }],
                         flex_direction: "column-reverse",
                         image: "",
                         reset_forward: false,

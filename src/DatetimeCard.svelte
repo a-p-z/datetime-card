@@ -64,7 +64,7 @@
                 {#if !showExpiredOnly || isExpired(entity.max, resetforward, getState(hass, entity)) }
                     <datetime-icon role="listitem" {entity} {hass} {resetforward} />
 
-                    <datetime-bar {entity} {hass} {resetforward} {shownames} />
+                    <datetime-bar {entity} friendlyname="{entity.friendly_name}" {hass} {resetforward} {shownames} />
 
                     <datetime-label {entity} {resetforward} {hass} />
                 {/if}

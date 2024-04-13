@@ -6,13 +6,14 @@
 	import { getState, isExpired, resetDate } from "./datetime";
 
 	export let entity: IEntity = undefined;
+	export let friendlyname: string = undefined;
 	export let hass: IHass = undefined;
 	export let resetforward: boolean;
 	export let shownames: boolean = undefined;
 
 	$: barColor = isExpired(max, resetforward, state) ? "#df4c1e" : "#0da035";
 	$: barHeight = shownames && !!friendlyName ? 18 : 3;
-	$: friendlyName = hass?.states?.[entity?.id]?.attributes?.friendly_name;
+	$: friendlyName = friendlyname || hass?.states?.[entity?.id]?.attributes?.friendly_name;
 	$: barWidth = Math.min(Math.abs((100 * (resetforward ? state + max : state)) / max), 100);
 	$: max = entity?.max;
 	$: state = getState(hass, entity);

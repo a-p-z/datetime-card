@@ -42,7 +42,7 @@ describe('DatetimeIcon.svelte', () => {
         getStateMock.mockReturnValue(1);
         isExpiredMock.mockReturnValue(false);
         const { getByTestId } = render(DatetimeIcon, { entity, hass });
-        expect(getByTestId("icon")).toHaveAttribute("title", "friendly name");
+        expect(getByTestId("icon")).toHaveAttribute("title", "hold to reset friendly name");
     });
 
     test("when state is 1", () => {

@@ -82,7 +82,7 @@
         on:clickoutside={reset}
     >
         {#each filteredItems as { primaryText, secondaryText, value }}
-            <li class="item" on:click={() => complete(value)}>
+            <li class="item" on:click={() => complete(value)} on:keypress={()=>{}}>
                 <span class="primary-text">{@html primaryText}</span>
                 {#if !!secondaryText}
                     <span class="secondary-text">{@html secondaryText}</span>

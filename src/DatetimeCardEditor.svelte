@@ -293,6 +293,7 @@
                 <ha-icon-button
                         data-testid="delete-{index}"
                         on:click={() => splice(entity.key)}
+                        on:keypress={()=>{}}
                 >
                     <ha-icon icon="mdi:delete"/>
                 </ha-icon-button>
@@ -313,7 +314,7 @@
     {/each}
 </section>
 <div class="plus">
-    <ha-icon-button data-testid="plus" class="plus" on:click={push}>
+    <ha-icon-button data-testid="plus" class="plus" on:click={push} on:keypress={()=>{}}>
         <ha-icon icon="mdi:plus"/>
     </ha-icon-button>
 </div>

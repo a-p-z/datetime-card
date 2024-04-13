@@ -1,6 +1,26 @@
 import type {IEntity, IHass} from "../types";
 import {setDatetimeServiceFactory} from "../hass";
 
+function formatDayString(days: number): string {
+    const sign = days >= 0 ? "" : "-";
+    const absoluteDays = Math.abs(days);
+
+    if (absoluteDays < 30) {
+        const dayString = absoluteDays !== 1 ? 'days' : 'day';
+        return `${sign}${absoluteDays} ${dayString}`;
+    }
+
+    const months = Math.floor(absoluteDays / 30);
+    const remainingDays = absoluteDays % 30;
+    const monthString = months !== 1 ? 'months' : 'month';
+    const dayString = remainingDays !== 1 ? 'days' : 'day';
+
+    if (remainingDays === 0) {
+        return `${sign}${months} ${monthString}`;
+    }
+    return `${sign}${months} ${monthString}, ${remainingDays} ${dayString}`;
+}
+
 function getState(hass?: IHass, entity?: IEntity): number {
     const entityDate = hass?.states?.[entity?.id]?.state ? new Date(hass.states[entity?.id].state) : new Date();
     const currentDate = new Date();
@@ -31,12 +51,12 @@ function resetDate(entity: IEntity, event: Event, hass: IHass, resetForward: 0 |
 }
 
 function toUTC(date: Date): string {
-  const year = date.getUTCFullYear();
-  const month = date.getUTCMonth() + 1;
-  const day = date.getUTCDate();
-  const monthPadded = month.toString().padStart(2, '0');
-  const dayPadded = day.toString().padStart(2, '0');
-  return `${year}-${monthPadded}-${dayPadded}`;
+    const year = date.getUTCFullYear();
+    const month = date.getUTCMonth() + 1;
+    const day = date.getUTCDate();
+    const monthPadded = month.toString().padStart(2, '0');
+    const dayPadded = day.toString().padStart(2, '0');
+    return `${year}-${monthPadded}-${dayPadded}`;
 }
 
-export {getState, isExpired, resetDate}
+export {formatDayString, getState, isExpired, resetDate}

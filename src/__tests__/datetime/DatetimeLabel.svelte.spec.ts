@@ -1,10 +1,11 @@
 import { render, fireEvent } from "@testing-library/svelte";
 import '@testing-library/jest-dom';
 import DatetimeLabel from '../../datetime/DatetimeLabel.svelte'
-import { getState, resetDate } from "../../datetime/datetime";
+import { formatDayString, getState, resetDate } from "../../datetime/datetime";
 
 jest.mock("../../datetime/datetime");
 
+const formatDayStringMock = formatDayString as jest.MockedFunction<typeof formatDayString>
 const getStateMock = getState as jest.MockedFunction<typeof getState>
 const resetDateMock = resetDate as jest.MockedFunction<typeof resetDate>
 
@@ -19,13 +20,15 @@ describe('DatetimeLabel.svelte', () => {
 
     test("when state is 1", () => {
         getStateMock.mockReturnValue(1);
+        formatDayStringMock.mockReturnValue("1 day")
         const { getByTestId } = render(DatetimeLabel, { entity, hass });
-        expect(getByTestId("days")).toHaveTextContent("1 days");
+        expect(getByTestId("days")).toHaveTextContent("1 day");
     });
 
     [0, 2, 3].forEach((state) => {
         test("when state is not 1", () => {
             getStateMock.mockReturnValue(state);
+            formatDayStringMock.mockReturnValue(`${state} days`)
             const { getByTestId } = render(DatetimeLabel, { entity, hass });
             expect(getByTestId("days")).toHaveTextContent(`${state} days`);
         });

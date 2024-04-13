@@ -1,11 +1,12 @@
 import { render } from "@testing-library/svelte";
 import '@testing-library/jest-dom';
 import DatetimeIcon from '../../datetime/DatetimeIcon.svelte'
-import { getState } from "../../datetime/datetime";
+import {getState, isExpired} from "../../datetime/datetime";
 
 jest.mock("../../datetime/datetime");
 
 const getStateMock = getState as jest.MockedFunction<typeof getState>
+const isExpiredMock = isExpired as jest.MockedFunction<typeof isExpired>
 
 describe('DatetimeIcon.svelte', () => {
     const hass = { states: { test: { attributes: { friendly_name: "friendly name", icon: "mdi:water" } } } };
@@ -31,6 +32,7 @@ describe('DatetimeIcon.svelte', () => {
     test("when icon is present it should be set", () => {
         const hass = { states: { test: { attributes: { icon: "mdi:water" } } } };
         getStateMock.mockReturnValue(1);
+        isExpiredMock.mockReturnValue(false);
         const { getByTestId } = render(DatetimeIcon, { entity, hass });
         expect(getByTestId("icon")).toHaveAttribute("icon", "mdi:water");
     });
@@ -38,12 +40,14 @@ describe('DatetimeIcon.svelte', () => {
     test("when friendly name is present title should be set", () => {
         const hass = { states: { test: { attributes: { friendly_name: "friendly name" } } } };
         getStateMock.mockReturnValue(1);
+        isExpiredMock.mockReturnValue(false);
         const { getByTestId } = render(DatetimeIcon, { entity, hass });
         expect(getByTestId("icon")).toHaveAttribute("title", "friendly name");
     });
 
     test("when state is 1", () => {
         getStateMock.mockReturnValue(1);
+        isExpiredMock.mockReturnValue(false);
         const { getByTestId } = render(DatetimeIcon, { entity, hass });
         expect(getByTestId("icon")).toHaveStyle(`color: ${blue}`);
     });
@@ -51,6 +55,7 @@ describe('DatetimeIcon.svelte', () => {
     [10, 11].forEach((state) => {
         test("when state >= max", () => {
             getStateMock.mockReturnValue(state);
+            isExpiredMock.mockReturnValue(true);
             const { getByTestId } = render(DatetimeIcon, { entity, hass });
             expect(getByTestId("icon")).toHaveStyle(`color: ${red}`);
         });

@@ -72,6 +72,7 @@ describe('DatetimeCardEditor.svelte', () => {
                         image: "",
                         reset_forward: false,
                         show_names: false,
+                        show_expired_only: false,
                         title: "My Datetime Card",
                         type: "custom:datetime-card",
                     }
@@ -90,6 +91,7 @@ describe('DatetimeCardEditor.svelte', () => {
                         image: "/local/image.png",
                         reset_forward: false,
                         show_names: false,
+                        show_expired_only: false,
                         type: "custom:datetime-card",
                         title: ""
                     }
@@ -108,6 +110,7 @@ describe('DatetimeCardEditor.svelte', () => {
                         image: "",
                         reset_forward: false,
                         show_names: true,
+                        show_expired_only: false,
                         type: "custom:datetime-card",
                         title: ""
                     }
@@ -126,6 +129,7 @@ describe('DatetimeCardEditor.svelte', () => {
                         image: "",
                         reset_forward: false,
                         show_names: false,
+                        show_expired_only: false,
                         type: "custom:datetime-card",
                         title: ""
                     }
@@ -144,6 +148,7 @@ describe('DatetimeCardEditor.svelte', () => {
                         image: "",
                         reset_forward: false,
                         show_names: false,
+                        show_expired_only: false,
                         type: "custom:datetime-card",
                         title: ""
                     }
@@ -164,6 +169,7 @@ describe('DatetimeCardEditor.svelte', () => {
                         image: "",
                         reset_forward: false,
                         show_names: false,
+                        show_expired_only: false,
                         type: "custom:datetime-card",
                         title: ""
                     }
@@ -255,6 +261,7 @@ describe('DatetimeCardEditor.svelte', () => {
                         image: "",
                         reset_forward: false,
                         show_names: false,
+                        show_expired_only: false,
                         title: "",
                         type: "custom:datetime-card",
                     }
@@ -273,6 +280,7 @@ describe('DatetimeCardEditor.svelte', () => {
                         image: "",
                         reset_forward: false,
                         show_names: false,
+                        show_expired_only: false,
                         title: "",
                         type: "custom:datetime-card",
                     }
@@ -297,6 +305,7 @@ describe('DatetimeCardEditor.svelte', () => {
                         image: "",
                         reset_forward: false,
                         show_names: false,
+                        show_expired_only: false,
                         title: "",
                         type: "custom:datetime-card",
                     }
@@ -317,6 +326,7 @@ describe('DatetimeCardEditor.svelte', () => {
                         image: "",
                         reset_forward: false,
                         show_names: false,
+                        show_expired_only: false,
                         title: "",
                         type: "custom:datetime-card",
                     }

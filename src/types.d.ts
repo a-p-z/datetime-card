@@ -11,6 +11,7 @@ export interface IConfig {
     image?: string;
     reset_forward?: boolean;
     title?: string;
+    show_expired_only?: boolean;
     show_names: boolean;
 }
 

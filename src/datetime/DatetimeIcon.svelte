@@ -2,13 +2,14 @@
 
 <script lang="ts">
 	import type { IEntity, IHass } from "../types";
-	import { getState } from "./datetime";
+    import {getState, isExpired} from "./datetime";
 
 	export let entity: IEntity = undefined;
 	export let hass: IHass = undefined;
+    export let resetforward: boolean;
 
 	$: icon = hass?.states?.[entity?.id]?.attributes?.icon;
-	$: color = state >= max ? "#df4c1e" : "#44739e";
+	$: color = isExpired(max, resetforward, state) ? "#df4c1e" : "#44739e";
 	$: max = entity?.max;
 	$: state = getState(hass, entity);
 	$: title = hass?.states?.[entity?.id]?.attributes?.friendly_name;

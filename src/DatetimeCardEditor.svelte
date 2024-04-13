@@ -17,6 +17,7 @@
 		reverse = config.flex_direction?.includes("reverse");
 		image = config.image || "";
 		title = config.title || "";
+        show_expired_only = config.show_expired_only || false;
 	}
 
 	$: autocompleteItems = Object.keys(hass?.states || {})
@@ -34,6 +35,7 @@
 	let draggableEntities: DraggableEntity[] = [new DraggableEntity(newKey())];
 	let dragDisabled = true;
 	let image: string;
+	let show_expired_only = false;
 	let show_names: boolean;
 	let title: string;
 
@@ -51,6 +53,7 @@
 			flex_direction,
 			image,
 			reset_forward,
+			show_expired_only,
 			show_names,
 			title,
 			type,
@@ -128,6 +131,10 @@
 		dispatchConfigChanged();
 	}
 
+	function updateShowExpiredOnly(event: Event): void {
+		show_expired_only = (<HTMLInputElement>event.target).checked;
+		dispatchConfigChanged();
+	}
 	function updateId(event: CustomEvent, entity: DraggableEntity): void {
 		entity.id = event.detail.value;
 		dispatchConfigChanged();
@@ -188,14 +195,6 @@
 
 <section class="switches">
 	<ha-switch
-		id="show-names-switch"
-		aria-label="Show names"
-		checked={show_names}
-		on:change={updateShowNames}
-	/>
-	<label for="show-names-switch">Show names</label>
-
-	<ha-switch
 		id="column-switch"
 		aria-label="Column"
 		checked={column}
@@ -218,6 +217,22 @@
 		on:change={updateReverse}
 	/>
 	<label for="reverse-switch">Reverse</label>
+
+	<ha-switch
+		id="show-expired-only-switch"
+		aria-label="Show expired only"
+		checked={show_expired_only}
+		on:change={updateShowExpiredOnly}
+	/>
+	<label for="show-expired-only-switch">Show expired only</label>
+
+	<ha-switch
+		id="show-names-switch"
+		aria-label="Show names"
+		checked={show_names}
+		on:change={updateShowNames}
+	/>
+	<label for="show-names-switch">Show names</label>
 </section>
 
 <h3>Entities (required)</h3>

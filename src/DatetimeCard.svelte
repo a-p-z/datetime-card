@@ -21,6 +21,7 @@
 
 <script lang="ts">
 	import type { IConfig } from "./types";
+	import { isExpired } from "./datetime/datetime";
 
 	export let hass: IHass = undefined;
 
@@ -28,6 +29,7 @@
 		resetforward = config.reset_forward || false;
 		entities = config.entities;
 		header = config.title !== undefined ? config.title : DEFAULT_TITLE;
+		showExpiredOnly = config.show_expired_only || false;
 		shownames = config.show_names || false;
 		flex_direction = config.flex_direction || "row";
 		src = config.image !== undefined ? config.image : DEFAULT_SRC;
@@ -38,6 +40,7 @@
 	let flex_direction = "row";
 	let header: string;
 	let resetforward: boolean;
+	let showExpiredOnly: boolean;
 	let shownames: boolean;
 	let src: string;
 </script>
@@ -58,11 +61,13 @@
 
 		<div class="grid">
 			{#each entities as entity}
-				<datetime-icon role="listitem" {entity} {hass} />
+                {#if !showExpiredOnly || isExpired(entity.max, resetforward, getState(hass, entity)) }
+                    <datetime-icon role="listitem" {entity} {hass} {resetforward} />
 
-				<datetime-bar {entity} {hass} {resetforward} {shownames} />
+                    <datetime-bar {entity} {hass} {resetforward} {shownames} />
 
-				<datetime-label {entity} {resetforward} {hass} />
+                    <datetime-label {entity} {resetforward} {hass} />
+                {/if}
 			{/each}
 		</div>
 	</div>

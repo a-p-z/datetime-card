@@ -13,6 +13,7 @@
 		draggableEntities = toDraggableEntities(config.entities);
 		show_names = config.show_names || false;
 		column = config.flex_direction?.includes("column");
+		reset_forward = config.reset_forward || false;
 		reverse = config.flex_direction?.includes("reverse");
 		image = config.image || "";
 		title = config.title || "";
@@ -27,6 +28,7 @@
 	const svelteDispatch = createEventDispatcher();
 
 	let column = false;
+	let reset_forward = false;
 	let reverse = false;
 	let key = 0;
 	let draggableEntities: DraggableEntity[] = [new DraggableEntity(newKey())];
@@ -35,8 +37,8 @@
 	let show_names: boolean;
 	let title: string;
 
-	function consider($event: any): void {
-		draggableEntities = $event.detail.items;
+	function consider(event: any): void {
+		draggableEntities = event.detail.items;
 	}
 
 	function dispatchConfigChanged(): void {
@@ -48,6 +50,7 @@
 			entities,
 			flex_direction,
 			image,
+			reset_forward,
 			show_names,
 			title,
 			type,
@@ -55,8 +58,8 @@
 		svelteDispatch("config-changed", { config });
 	}
 
-	function finalize($event: CustomEvent): void {
-		draggableEntities = $event.detail.items;
+	function finalize(event: CustomEvent): void {
+		draggableEntities = event.detail.items;
 		dragDisabled = true;
 		dispatchConfigChanged();
 	}
@@ -120,47 +123,51 @@
 	function toEntity({ id, max }: DraggableEntity): IEntity {
 		return { id, max: parseInt(max) || 0 };
 	}
-
-	function updateColumn($event: Event): void {
-		column = (<HTMLInputElement>$event.target).checked;
+	function updateColumn(event: Event): void {
+		column = (<HTMLInputElement>event.target).checked;
 		dispatchConfigChanged();
 	}
 
-	function updateId($event: CustomEvent, entity: DraggableEntity): void {
-		entity.id = $event.detail.value;
+	function updateId(event: CustomEvent, entity: DraggableEntity): void {
+		entity.id = event.detail.value;
 		dispatchConfigChanged();
 	}
 
-	function updateImage($event: Event): void {
-		image = (<HTMLInputElement>$event.target).value;
+	function updateImage(event: Event): void {
+		image = (<HTMLInputElement>event.target).value;
 		dispatchConfigChanged();
 	}
 
-	function updateMax($event: Event, entity: DraggableEntity): void {
-		const value = Number((<HTMLInputElement>$event.target).value);
+	function updateMax(event: Event, entity: DraggableEntity): void {
+		const value = Number((<HTMLInputElement>event.target).value);
 
 		if (!Number.isInteger(value) || value < 0) {
-			(<HTMLInputElement>$event.target).value = entity.max;
+			(<HTMLInputElement>event.target).value = entity.max;
 			return;
 		}
 
-		(<HTMLInputElement>$event.target).value = value.toString();
+		(<HTMLInputElement>event.target).value = value.toString();
 		entity.max = value.toString();
 		dispatchConfigChanged();
 	}
 
-	function updateReverse($event: Event): void {
-		reverse = (<HTMLInputElement>$event.target).checked;
+	function updateResetForward(event: Event): void {
+		reset_forward = (<HTMLInputElement>event.target).checked;
 		dispatchConfigChanged();
 	}
 
-	function updateShowNames($event: Event): void {
-		show_names = (<HTMLInputElement>$event.target).checked;
+	function updateReverse(event: Event): void {
+		reverse = (<HTMLInputElement>event.target).checked;
 		dispatchConfigChanged();
 	}
 
-	function updateTitle($event: Event): void {
-		title = (<HTMLInputElement>$event.target).value;
+	function updateShowNames(event: Event): void {
+		show_names = (<HTMLInputElement>event.target).checked;
+		dispatchConfigChanged();
+	}
+
+	function updateTitle(event: Event): void {
+		title = (<HTMLInputElement>event.target).value;
 		dispatchConfigChanged();
 	}
 </script>
@@ -195,6 +202,14 @@
 		on:change={updateColumn}
 	/>
 	<label for="column-switch">Column</label>
+
+	<ha-switch
+		id="reset-forward-switch"
+		aria-label="Reset forward"
+		checked={reset_forward}
+		on:change={updateResetForward}
+	/>
+	<label for="reset-forward-switch">Reset forward</label>
 
 	<ha-switch
 		id="reverse-switch"
@@ -240,7 +255,7 @@
 				label="Entity"
 				items={autocompleteItems}
 				value={entity.id}
-				on:change={($event) => updateId($event, entity)}
+				on:change={(event) => updateId(event, entity)}
 			/>
 
 			<ha-textfield
@@ -248,7 +263,7 @@
 				class="max-textfield"
 				label="Max"
 				value={entity.max}
-				on:input={($event) => updateMax($event, entity)}
+				on:input={(event) => updateMax(event, entity)}
 			/>
 
 			{#if draggableEntities.length > 1}

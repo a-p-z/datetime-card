@@ -4,7 +4,7 @@ import DatetimeCard from '../DatetimeCard.svelte'
 
 describe('DatetimeCard.svelte', () => {
     describe('when config is empty', () => {
-        const config = { type: "custom:datetime-card" };
+        const config = { reset_forward: 0, type: "custom:datetime-card" };
 
         test("the default title should be in the document", async () => {
             const { component, getByRole } = render(DatetimeCard);

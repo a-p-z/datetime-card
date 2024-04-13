@@ -1,18 +1,19 @@
 <svelte:options tag="datetime-bar" />
 
 <script lang="ts">
-	import type { IEntity, IHass } from "../types";
+	import type {IEntity, IHass} from "../types";
 	import { hold } from "../actions/hold";
-	import { getState, resetDate } from "./datetime";
+	import { getState, isExpired, resetDate } from "./datetime";
 
 	export let entity: IEntity = undefined;
 	export let hass: IHass = undefined;
+	export let resetforward: boolean;
 	export let shownames: boolean = undefined;
 
-	$: barColor = state >= max ? "#df4c1e" : "#0da035";
+	$: barColor = isExpired(max, resetforward, state) ? "#df4c1e" : "#0da035";
 	$: barHeight = shownames && !!friendlyName ? 18 : 3;
 	$: friendlyName = hass?.states?.[entity?.id]?.attributes?.friendly_name;
-	$: barWidth = Math.min(Math.abs((100 * state) / max), 100);
+	$: barWidth = Math.min(Math.abs((100 * (resetforward ? state + max : state)) / max), 100);
 	$: max = entity?.max;
 	$: state = getState(hass, entity);
 </script>
@@ -23,7 +24,7 @@
 	style:height="{barHeight}px"
 	title="hold to reset"
 	use:hold
-	on:hold={($event) => resetDate($event, hass, entity)}
+	on:hold={(event) => resetDate(entity, event, hass, resetforward ? 1 : 0)}
 >
 	<div
 		data-testid="internal-bar"
@@ -54,7 +55,7 @@
 	}
 
 	.internal-bar {
-		width: 0%;
+		width: 0;
 		height: 3px;
 		max-width: 100%;
 	}

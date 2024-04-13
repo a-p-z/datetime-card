@@ -1,12 +1,13 @@
 <svelte:options tag="datetime-label" />
 
 <script lang="ts">
-	import type { IEntity, IHass } from "../types";
+	import type {IEntity, IHass} from "../types";
 	import { getState, resetDate } from "./datetime";
 	import { hold } from "../actions/hold";
 
 	export let entity: IEntity = undefined;
 	export let hass: IHass = undefined;
+	export let resetforward: boolean;
 
 	$: label = `${getState(hass, entity)} days`;
 </script>
@@ -15,7 +16,7 @@
 	data-testid="days"
 	title="hold to reset"
 	use:hold
-	on:hold={($event) => resetDate($event, hass, entity)}
+	on:hold={(event) => resetDate(entity, event, hass, resetforward ? 1 : 0)}
 >
 	{label}
 </div>

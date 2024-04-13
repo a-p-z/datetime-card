@@ -2,6 +2,7 @@
 
 <script context="module" lang="ts">
 	import { getState } from "./datetime/datetime";
+	import type { IEntity, IHass } from "./types";
 
 	const DEFAULT_SRC =
 		"https://demo.home-assistant.io/stub_config/t-shirt-promo.png";
@@ -19,11 +20,12 @@
 </script>
 
 <script lang="ts">
-	import type { IConfig, IEntity, IHass } from "./types";
+	import type { IConfig } from "./types";
 
 	export let hass: IHass = undefined;
 
 	export function setConfig(config: IConfig): void {
+		resetforward = config.reset_forward || false;
 		entities = config.entities;
 		header = config.title !== undefined ? config.title : DEFAULT_TITLE;
 		shownames = config.show_names || false;
@@ -35,6 +37,7 @@
 
 	let flex_direction = "row";
 	let header: string;
+	let resetforward: boolean;
 	let shownames: boolean;
 	let src: string;
 </script>
@@ -57,9 +60,9 @@
 			{#each entities as entity}
 				<datetime-icon role="listitem" {entity} {hass} />
 
-				<datetime-bar {entity} {hass} {shownames} />
+				<datetime-bar {entity} {hass} {resetforward} {shownames} />
 
-				<datetime-label {entity} {hass} />
+				<datetime-label {entity} {resetforward} {hass} />
 			{/each}
 		</div>
 	</div>

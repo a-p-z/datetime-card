@@ -9,6 +9,7 @@ const getStateMock = getState as jest.MockedFunction<typeof getState>
 const resetDateMock = resetDate as jest.MockedFunction<typeof resetDate>
 
 describe('DatetimeLabel.svelte', () => {
+    const resetforward = false;
     const entity = {};
     const hass = { localize: (key: string, params: any) => `${params["count"]} ${key}` };
 
@@ -31,11 +32,11 @@ describe('DatetimeLabel.svelte', () => {
     });
 
     test("when hold state should be reset", async () => {
-        const $event = new CustomEvent("hold");
-        const { getByTestId } = render(DatetimeLabel, { entity, hass });
+        const event = new CustomEvent("hold");
+        const { getByTestId } = render(DatetimeLabel, { entity, hass, resetforward });
 
-        await fireEvent(getByTestId("days"), $event);
+        await fireEvent(getByTestId("days"), event);
 
-        expect(resetDateMock).toBeCalledWith($event, hass, entity);
+        expect(resetDateMock).toBeCalledWith(entity, event, hass, 0);
     });
 });

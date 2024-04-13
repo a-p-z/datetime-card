@@ -1,31 +1,42 @@
-import type { IEntity, IHass } from "../types";
-import { setDatetimeServiceFactory } from "../hass";
+import type {IEntity, IHass} from "../types";
+import {setDatetimeServiceFactory} from "../hass";
 
-const MS_IN_A_DAY = 1000 * 60 * 60 * 24;
-
-function getState(hass: IHass, entity: IEntity): number {
-    const tzOffset = new Date().getTimezoneOffset() * 60000;
-    const localDateTime = Date.now() - tzOffset;
-    const date = Date.parse(hass?.states?.[entity?.id]?.state) || localDateTime;
-    return Math.floor((localDateTime - date) / MS_IN_A_DAY);
+function getState(hass?: IHass, entity?: IEntity): number {
+    const entityDate = hass?.states?.[entity?.id]?.state ? new Date(hass.states[entity?.id].state) : new Date();
+    const currentDate = new Date();
+    const differenceInMilliseconds = currentDate.getTime() - entityDate.getTime();
+    const differenceInDays = differenceInMilliseconds / (1000 * 60 * 60 * 24);
+    return Math.floor(differenceInDays);
 }
 
-function resetDate($event: Event, hass: IHass, entity: IEntity): void {
+function isExpired(max: number, resetForward: boolean, state: number): boolean {
+    return resetForward ? state >= 0 : state >= max;
+}
+
+function resetDate(entity: IEntity, event: Event, hass: IHass, resetForward: 0 | 1): void {
     const friendly_name = hass.states[entity.id].attributes.friendly_name;
     const entity_id = entity.id;
-    const tzOffset = new Date().getTimezoneOffset() * 60000;
-    const localDateTime = new Date(Date.now() - tzOffset);
-    const localDate = localDateTime.toISOString().split("T")[0];
-    const confirmation = `Do you want to reset ${friendly_name}?`;
+    const targetDate = new Date();
+    targetDate.setUTCDate(new Date().getUTCDate() + resetForward * entity.max);
+    const confirmation = `Do you want to reset ${friendly_name} to ${toUTC(targetDate)}?`;
     const element = setDatetimeServiceFactory(
         hass,
         confirmation,
         entity_id,
-        localDate
+        toUTC(targetDate)
     );
-    (<any>$event.target).appendChild(element);
+    (<any>event.target).appendChild(element);
     (<any>element)._buttonTapped();
-    (<any>$event.target).removeChild(element);
+    (<any>event.target).removeChild(element);
 }
 
-export { getState, resetDate }
+function toUTC(date: Date): string {
+  const year = date.getUTCFullYear();
+  const month = date.getUTCMonth() + 1;
+  const day = date.getUTCDate();
+  const monthPadded = month.toString().padStart(2, '0');
+  const dayPadded = day.toString().padStart(2, '0');
+  return `${year}-${monthPadded}-${dayPadded}`;
+}
+
+export {getState, isExpired, resetDate}

@@ -5,10 +5,11 @@ export interface IAutocompleteItem {
 }
 
 export interface IConfig {
-    readonly type: string = "custom:datetime-card";
-    entities?: IEntity[] = [];
+    readonly type: "custom:datetime-card";
+    entities?: IEntity[];
     flex_direction: "column" | "row" | "column-reverse" | "row-reverse";
     image?: string;
+    reset_forward?: boolean;
     title?: string;
     show_names: boolean;
 }

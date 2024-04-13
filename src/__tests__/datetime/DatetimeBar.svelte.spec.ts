@@ -1,12 +1,13 @@
 import { fireEvent, render } from "@testing-library/svelte";
 import '@testing-library/jest-dom';
 import DatetimeBar from '../../datetime/DatetimeBar.svelte'
-import { getState, resetDate } from "../../datetime/datetime";
+import {getState, isExpired, resetDate} from "../../datetime/datetime";
 
 jest.mock("../../datetime/datetime");
 
-const resetDateMock = resetDate as jest.MockedFunction<typeof resetDate>
 const getStateMock = getState as jest.MockedFunction<typeof getState>
+const isExpiredMock = isExpired as jest.MockedFunction<typeof isExpired>
+const resetDateMock = resetDate as jest.MockedFunction<typeof resetDate>
 
 describe('DatetimeBar.svelte', () => {
     const rgbGreen = "rgb(13, 160, 53)";
@@ -16,17 +17,18 @@ describe('DatetimeBar.svelte', () => {
     const friendly_name = "friendly name";
 
     describe('when hass is undefined', () => {
+        const resetforward = false;
         const entity = { id: "input_datetime_test", max: 10 };
 
         let getByTestId: any;
 
         beforeEach(() => {
-            const result = render(DatetimeBar, { entity });
+            const result = render(DatetimeBar, { entity, resetforward });
             getByTestId = result.getByTestId;
         });
 
         test("internal-bar width should be 0%", () => {
-            expect(getByTestId("internal-bar")).toHaveStyle("width: 0%");
+            expect(getByTestId("internal-bar")).toHaveStyle("width: 0");
         });
 
         test("internal-bar background should be green", () => {
@@ -42,13 +44,14 @@ describe('DatetimeBar.svelte', () => {
         let getByTestId: any;
 
         beforeEach(() => {
-            const result = render(DatetimeBar, { hass });
+            const resetforward = false;
+            const result = render(DatetimeBar, { hass, resetforward });
             getByTestId = result.getByTestId;
         });
 
 
         test("internal-bar width should be 0%", () => {
-            expect(getByTestId("internal-bar")).toHaveStyle("width: 0%");
+            expect(getByTestId("internal-bar")).toHaveStyle("width: 0");
         });
 
         test("internal-bar background should be green", () => {
@@ -61,6 +64,7 @@ describe('DatetimeBar.svelte', () => {
     });
 
     describe("when show_names is false", () => {
+        const resetforward = false;
         const hass = { states: { input_datetime_test: { attributes: { friendly_name } } } };
         const entity = { id: "input_datetime_test", max: 10 };
         const shownames = false;
@@ -69,7 +73,7 @@ describe('DatetimeBar.svelte', () => {
         let queryByTestId: any;
 
         beforeEach(() => {
-            const result = render(DatetimeBar, { hass, entity, shownames });
+            const result = render(DatetimeBar, { entity, hass, resetforward, shownames });
             getByTestId = result.getByTestId;
             queryByTestId = result.queryByTestId;
         });
@@ -84,6 +88,7 @@ describe('DatetimeBar.svelte', () => {
     });
 
     describe("when show_names is true", () => {
+        const resetforward = false;
         const hass = { states: { input_datetime_test: { attributes: { friendly_name } } } };
         const entity = { id: "input_datetime_test", max: 10 };
         const shownames = true;
@@ -91,7 +96,7 @@ describe('DatetimeBar.svelte', () => {
         let getByTestId: any;
 
         beforeEach(() => {
-            const result = render(DatetimeBar, { hass, entity, shownames });
+            const result = render(DatetimeBar, { entity, hass, resetforward, shownames });
             getByTestId = result.getByTestId;
         });
 
@@ -114,12 +119,13 @@ describe('DatetimeBar.svelte', () => {
         let getByTestId: any;
 
         beforeEach(() => {
-            const result = render(DatetimeBar, { hass, entity });
+            const resetforward = false;
+            const result = render(DatetimeBar, { entity, hass, resetforward });
             getByTestId = result.getByTestId;
         });
 
         test("internal-bar width should be 0%", () => {
-            expect(getByTestId("internal-bar")).toHaveStyle("width: 0%");
+            expect(getByTestId("internal-bar")).toHaveStyle("width: 0");
         });
 
         test("internal-bar background should be green", () => {
@@ -134,13 +140,13 @@ describe('DatetimeBar.svelte', () => {
         let getByTestId: any;
 
         beforeEach(() => {
-            getStateMock.mockReturnValue(1);
-            const result = render(DatetimeBar, { hass, entity });
+            const resetforward = false;
+            const result = render(DatetimeBar, { entity, hass, resetforward });
             getByTestId = result.getByTestId;
         });
 
         test("internal-bar width should be 0%", () => {
-            expect(getByTestId("internal-bar")).toHaveStyle("width: 0%");
+            expect(getByTestId("internal-bar")).toHaveStyle("width: 0");
         });
 
         test("internal-bar background should be green", () => {
@@ -149,6 +155,7 @@ describe('DatetimeBar.svelte', () => {
     });
 
     describe('when hass contains the entity and state < max', () => {
+        const resetforward = false;
         const hass = { states: { input_datetime_test: { attributes: { friendly_name } } } };
         const entity = { id: "input_datetime_test", max: 10 };
         const shownames = true;
@@ -156,7 +163,9 @@ describe('DatetimeBar.svelte', () => {
         let getByTestId: any;
 
         beforeEach(() => {
-            const result = render(DatetimeBar, { hass, entity, shownames });
+            getStateMock.mockReturnValue(1);
+            isExpiredMock.mockReturnValue(false);
+            const result = render(DatetimeBar, { entity, hass, resetforward, shownames });
             getByTestId = result.getByTestId;
         });
 
@@ -176,13 +185,15 @@ describe('DatetimeBar.svelte', () => {
     describe('when hass contains the entity and state == max', () => {
         const hass = { states: { input_datetime_test: { attributes: { friendly_name } } } };
         const entity = { id: "input_datetime_test", max: 10 };
+        const resetforward = false;
         const shownames = true;
 
         let getByTestId: any;
 
         beforeEach(() => {
             getStateMock.mockReturnValue(10);
-            const result = render(DatetimeBar, { hass, entity, shownames });
+            isExpiredMock.mockReturnValue(true);
+            const result = render(DatetimeBar, { entity, hass, resetforward, shownames });
             getByTestId = result.getByTestId;
         });
 
@@ -208,6 +219,7 @@ describe('DatetimeBar.svelte', () => {
 
         beforeEach(() => {
             getStateMock.mockReturnValue(11);
+            isExpiredMock.mockReturnValue(true);
             const result = render(DatetimeBar, { hass, entity, shownames });
             getByTestId = result.getByTestId;
         });
@@ -225,11 +237,11 @@ describe('DatetimeBar.svelte', () => {
         });
 
         test("when hold state should be reset", async () => {
-            const $event = new CustomEvent("hold");
+            const event = new CustomEvent("hold");
 
-            await fireEvent(getByTestId("external-bar"), $event);
+            await fireEvent(getByTestId("external-bar"), event);
 
-            expect(resetDateMock).toBeCalledWith($event, hass, entity);
+            expect(resetDateMock).toBeCalledWith(entity, event, hass, 0);
         });
     });
 });

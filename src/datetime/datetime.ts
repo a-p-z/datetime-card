@@ -24,7 +24,7 @@ function resetDate($event: Event, hass: IHass, entity: IEntity): void {
         localDate
     );
     (<any>$event.target).appendChild(element);
-    (<any>element).buttonTapped();
+    (<any>element)._buttonTapped();
     (<any>$event.target).removeChild(element);
 }
 

@@ -8,9 +8,7 @@
 	export let entity: IEntity = undefined;
 	export let hass: IHass = undefined;
 
-	$: label = hass?.localize("ui.duration.day", {
-		count: getState(hass, entity),
-	});
+	$: label = `${getState(hass, entity)} days`;
 </script>
 
 <div

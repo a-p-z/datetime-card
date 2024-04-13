@@ -5,7 +5,7 @@
   "author": {
     "email": "antpza@gmail.com",
     "name": "apz",
-    "url": "http://github.com/a-p-z"
+    "url": "https://github.com/a-p-z"
   },
   "scripts": {
     "build": "rollup -c",
@@ -39,7 +39,7 @@
     "typescript": "^4.6.4"
   },
   "dependencies": {
-    "svelte-dnd-action": "^0.9.18"
+    "svelte-dnd-action": "^0.9.35"
   },
   "repository": {
     "type": "git",

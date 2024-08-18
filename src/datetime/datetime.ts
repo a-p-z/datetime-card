@@ -37,23 +37,23 @@ function resetDate(entity: IEntity, event: Event, hass: IHass, resetForward: 0 |
     const friendly_name = hass.states[entity.id].attributes.friendly_name;
     const entity_id = entity.id;
     const targetDate = new Date();
-    targetDate.setUTCDate(new Date().getUTCDate() + resetForward * entity.max);
-    const confirmation = `Do you want to reset ${friendly_name} to ${toUTC(targetDate)}?`;
+    targetDate.setDate(targetDate.getDate() + resetForward * entity.max);
+    const confirmation = `Do you want to reset ${friendly_name} to ${format(targetDate)}?`;
     const element = setDatetimeServiceFactory(
         hass,
         confirmation,
         entity_id,
-        toUTC(targetDate)
+        format(targetDate)
     );
     (<any>event.target).appendChild(element);
     (<any>element)._buttonTapped();
     (<any>event.target).removeChild(element);
 }
 
-function toUTC(date: Date): string {
-    const year = date.getUTCFullYear();
-    const month = date.getUTCMonth() + 1;
-    const day = date.getUTCDate();
+function format(date: Date): string {
+    const year = date.getFullYear();
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
     const monthPadded = month.toString().padStart(2, '0');
     const dayPadded = day.toString().padStart(2, '0');
     return `${year}-${monthPadded}-${dayPadded}`;

@@ -69,10 +69,11 @@ describe('DatetimeCardEditor.svelte', () => {
                     config: {
                         entities: [{ friendly_name: "", id: "", max: 0 }],
                         flex_direction: "row",
+                        format_label: false,
                         image: "",
                         reset_forward: false,
-                        show_names: false,
                         show_expired_only: false,
+                        show_names: false,
                         title: "My Datetime Card",
                         type: "custom:datetime-card",
                     }
@@ -88,12 +89,13 @@ describe('DatetimeCardEditor.svelte', () => {
                     config: {
                         entities: [{ friendly_name: "", id: "", max: 0 }],
                         flex_direction: "row",
+                        format_label: false,
                         image: "/local/image.png",
                         reset_forward: false,
-                        show_names: false,
                         show_expired_only: false,
+                        show_names: false,
+                        title: "",
                         type: "custom:datetime-card",
-                        title: ""
                     }
                 });
             });
@@ -107,12 +109,13 @@ describe('DatetimeCardEditor.svelte', () => {
                     config: {
                         entities: [{ friendly_name: "", id: "", max: 0 }],
                         flex_direction: "row",
+                        format_label: false,
                         image: "",
                         reset_forward: false,
-                        show_names: true,
                         show_expired_only: false,
+                        show_names: true,
+                        title: "",
                         type: "custom:datetime-card",
-                        title: ""
                     }
                 });
             });
@@ -126,12 +129,13 @@ describe('DatetimeCardEditor.svelte', () => {
                     config: {
                         entities: [{ friendly_name: "", id: "", max: 0 }],
                         flex_direction: "column",
+                        format_label: false,
                         image: "",
                         reset_forward: false,
-                        show_names: false,
                         show_expired_only: false,
+                        show_names: false,
+                        title: "",
                         type: "custom:datetime-card",
-                        title: ""
                     }
                 });
             });
@@ -145,12 +149,13 @@ describe('DatetimeCardEditor.svelte', () => {
                     config: {
                         entities: [{ friendly_name: "", id: "", max: 0 }],
                         flex_direction: "row-reverse",
+                        format_label: false,
                         image: "",
                         reset_forward: false,
-                        show_names: false,
                         show_expired_only: false,
+                        show_names: false,
+                        title: "",
                         type: "custom:datetime-card",
-                        title: ""
                     }
                 });
             });
@@ -166,12 +171,13 @@ describe('DatetimeCardEditor.svelte', () => {
                     config: {
                         entities: [{ friendly_name: "", id: "", max: 0 }],
                         flex_direction: "column-reverse",
+                        format_label: false,
                         image: "",
                         reset_forward: false,
-                        show_names: false,
                         show_expired_only: false,
+                        show_names: false,
+                        title: "",
                         type: "custom:datetime-card",
-                        title: ""
                     }
                 });
             });
@@ -258,10 +264,11 @@ describe('DatetimeCardEditor.svelte', () => {
                     config: {
                         entities: [{ id: "input_datetime.test", "max": 10 }, entity2],
                         flex_direction: "row",
+                        format_label: false,
                         image: "",
                         reset_forward: false,
-                        show_names: false,
                         show_expired_only: false,
+                        show_names: false,
                         title: "",
                         type: "custom:datetime-card",
                     }
@@ -277,10 +284,11 @@ describe('DatetimeCardEditor.svelte', () => {
                     config: {
                         entities: [{ "id": "input_datetime.test_1", "max": 20 }, entity2],
                         flex_direction: "row",
+                        format_label: false,
                         image: "",
                         reset_forward: false,
-                        show_names: false,
                         show_expired_only: false,
+                        show_names: false,
                         title: "",
                         type: "custom:datetime-card",
                     }
@@ -302,10 +310,11 @@ describe('DatetimeCardEditor.svelte', () => {
                     config: {
                         entities: [{ "id": "input_datetime.test_2", "max": 20, }],
                         flex_direction: "row",
+                        format_label: false,
                         image: "",
                         reset_forward: false,
-                        show_names: false,
                         show_expired_only: false,
+                        show_names: false,
                         title: "",
                         type: "custom:datetime-card",
                     }
@@ -323,10 +332,11 @@ describe('DatetimeCardEditor.svelte', () => {
                     config: {
                         entities: [],
                         flex_direction: "row",
+                        format_label: false,
                         image: "",
                         reset_forward: false,
-                        show_names: false,
                         show_expired_only: false,
+                        show_names: false,
                         title: "",
                         type: "custom:datetime-card",
                     }

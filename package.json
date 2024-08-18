@@ -1,6 +1,6 @@
 {
   "name": "datetime-card",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "A minimalistic card for Home Assistant Lovelace UI which shows how many days it has been between any input_datetime and today.",
   "author": {
     "email": "antpza@gmail.com",

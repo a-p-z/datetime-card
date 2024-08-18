@@ -6,10 +6,11 @@
     import {hold} from "../actions/hold";
 
     export let entity: IEntity = undefined;
+    export let formatlabel: boolean;
     export let hass: IHass = undefined;
     export let resetforward: boolean;
 
-    $: label = formatDayString(getState(hass, entity));
+    $: label = formatDayString(getState(hass, entity), formatlabel);
 </script>
 
 <div

@@ -1,11 +1,11 @@
 import type {IEntity, IHass} from "../types";
 import {setDatetimeServiceFactory} from "../hass";
 
-function formatDayString(days: number): string {
+function formatDayString(days: number, formatLabel: boolean): string {
     const sign = days >= 0 ? "" : "-";
     const absoluteDays = Math.abs(days);
 
-    if (absoluteDays < 30) {
+    if (!formatLabel || absoluteDays < 30) {
         const dayString = absoluteDays !== 1 ? 'days' : 'day';
         return `${sign}${absoluteDays} ${dayString}`;
     }

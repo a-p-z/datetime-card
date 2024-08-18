@@ -10,14 +10,15 @@
     export let hass: IHass = undefined;
 
     export function setConfig(config: IConfig): void {
-        draggableEntities = toDraggableEntities(config.entities);
-        show_names = config.show_names || false;
         column = config.flex_direction?.includes("column");
+        draggableEntities = toDraggableEntities(config.entities);
+        format_label = config.format_label || false;
+        image = config.image || "";
         reset_forward = config.reset_forward || false;
         reverse = config.flex_direction?.includes("reverse");
-        image = config.image || "";
-        title = config.title || "";
         show_expired_only = config.show_expired_only || false;
+        show_names = config.show_names || false;
+        title = config.title || "";
     }
 
     $: autocompleteItems = Object.keys(hass?.states || {})
@@ -29,12 +30,13 @@
     const svelteDispatch = createEventDispatcher();
 
     let column = false;
+    let dragDisabled = true;
+    let draggableEntities: DraggableEntity[] = [new DraggableEntity(1)];
+    let format_label = false;
+    let image: string;
+    let key = 1;
     let reset_forward = false;
     let reverse = false;
-    let key = 0;
-    let draggableEntities: DraggableEntity[] = [new DraggableEntity(newKey())];
-    let dragDisabled = true;
-    let image: string;
     let show_expired_only = false;
     let show_names: boolean;
     let title: string;
@@ -51,6 +53,7 @@
         const config = {
             entities,
             flex_direction,
+            format_label,
             image,
             reset_forward,
             show_expired_only,
@@ -167,6 +170,11 @@
         dispatchConfigChanged();
     }
 
+    function updateFormatLabel(event: Event): void {
+        format_label = (<HTMLInputElement>event.target).checked;
+        dispatchConfigChanged();
+    }
+
     function updateResetForward(event: Event): void {
         reset_forward = (<HTMLInputElement>event.target).checked;
         dispatchConfigChanged();
@@ -210,6 +218,14 @@
             on:change={updateColumn}
     />
     <label for="column-switch">Column</label>
+
+    <ha-switch
+            id="format-label-switch"
+            aria-label="Format label"
+            checked={format_label}
+            on:change={updateFormatLabel}
+    />
+    <label for="format-label-switch">Format label</label>
 
     <ha-switch
             id="reset-forward-switch"
@@ -297,7 +313,7 @@
                 >
                     <ha-icon icon="mdi:delete"/>
                 </ha-icon-button>
-                {:else }
+            {:else }
                 <div></div>
             {/if}
             <div></div>
@@ -354,5 +370,12 @@
     .plus {
         display: flex;
         justify-content: flex-end;
+    }
+
+    .switches {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px 6px;
+        margin: 16px 0;
     }
 </style>

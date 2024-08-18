@@ -26,18 +26,20 @@
 	export let hass: IHass = undefined;
 
 	export function setConfig(config: IConfig): void {
-		resetforward = config.reset_forward || false;
 		entities = config.entities;
+		flex_direction = config.flex_direction || "row";
+		formatlabel = config.format_label || false;
 		header = config.title !== undefined ? config.title : DEFAULT_TITLE;
+		resetforward = config.reset_forward || false;
 		showExpiredOnly = config.show_expired_only || false;
 		shownames = config.show_names || false;
-		flex_direction = config.flex_direction || "row";
 		src = config.image !== undefined ? config.image : DEFAULT_SRC;
 	}
 
 	$: entities = entities || getDefaultEntities(hass);
 
 	let flex_direction = "row";
+	let formatlabel: boolean;
 	let header: string;
 	let resetforward: boolean;
 	let showExpiredOnly: boolean;
@@ -66,7 +68,7 @@
 
                     <datetime-bar {entity} friendlyname="{entity.friendly_name}" {hass} {resetforward} {shownames} />
 
-                    <datetime-label {entity} {resetforward} {hass} />
+                    <datetime-label {entity} {formatlabel} {hass} {resetforward}/>
                 {/if}
 			{/each}
 		</div>

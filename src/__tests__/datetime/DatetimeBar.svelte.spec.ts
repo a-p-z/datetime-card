@@ -211,8 +211,9 @@ describe('DatetimeBar.svelte', () => {
     });
 
     describe('when hass contains the entity and state > max', () => {
-        const hass = { states: { input_datetime_test: { attributes: { friendly_name } } } };
         const entity = { id: "input_datetime_test", max: 10 };
+        const hass = { states: { input_datetime_test: { attributes: { friendly_name } } } };
+        const resetforward = false;
         const shownames = true;
 
         let getByTestId: any;
@@ -220,7 +221,7 @@ describe('DatetimeBar.svelte', () => {
         beforeEach(() => {
             getStateMock.mockReturnValue(11);
             isExpiredMock.mockReturnValue(true);
-            const result = render(DatetimeBar, { hass, entity, shownames });
+            const result = render(DatetimeBar, { entity, hass, resetforward, shownames });
             getByTestId = result.getByTestId;
         });
 

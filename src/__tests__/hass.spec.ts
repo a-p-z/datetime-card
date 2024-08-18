@@ -12,7 +12,7 @@ describe("hass", () => {
         expect(element).toHaveProperty("confirmation", "confirmation");
         expect(element).toHaveProperty("domain", "input_datetime");
         expect(element).toHaveProperty("service", "set_datetime");
-        expect(element).toHaveProperty("serviceData", { entity_id, date })
+        expect(element).toHaveProperty("data", { entity_id, date })
         expect(element).toHaveProperty("style.display", "none");
     });
 });

@@ -284,6 +284,7 @@
                     data-testid="handle-{index}"
                     class="handle"
                     icon="mdi:drag"
+                    role="menuitem"
                     on:mousedown={startDrag}
                     on:touchstart={startDrag}
                     on:mouseup={stopDrag}
@@ -308,6 +309,7 @@
             {#if draggableEntities.length > 1}
                 <ha-icon-button
                         data-testid="delete-{index}"
+                        role="menuitem"
                         on:click={() => splice(entity.key)}
                         on:keypress={()=>{}}
                 >
@@ -330,7 +332,9 @@
     {/each}
 </section>
 <div class="plus">
-    <ha-icon-button data-testid="plus" class="plus" on:click={push} on:keypress={()=>{}}>
+    <ha-icon-button data-testid="plus" class="plus"
+                    role="button"
+                    on:click={push} on:keypress={()=>{}}>
         <ha-icon icon="mdi:plus"></ha-icon>
     </ha-icon-button>
 </div>

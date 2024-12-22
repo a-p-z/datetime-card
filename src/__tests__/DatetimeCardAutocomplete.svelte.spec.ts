@@ -1,12 +1,9 @@
 import { render, fireEvent } from "@testing-library/svelte";
 import '@testing-library/jest-dom';
 import DatetimeCardAutocomplete from '../DatetimeCardAutocomplete.svelte';
-import { createEventDispatcher } from "../svelte";
 import { tick } from "svelte";
 
 jest.mock("../svelte");
-
-const createEventDispatcherMock: jest.MockedFunction<typeof createEventDispatcher> = createEventDispatcher as jest.MockedFunction<typeof createEventDispatcher>;
 
 describe("DatetimeCardAutocomplete.svelte", () => {
     const items = [
@@ -29,9 +26,6 @@ describe("DatetimeCardAutocomplete.svelte", () => {
         let getByRole: any;
 
         beforeEach(() => {
-            eventDispatcher = jest.fn();
-            createEventDispatcherMock.mockReturnValue(eventDispatcher);
-
             const result = render(DatetimeCardAutocomplete, { items, label: "label", value: "value" });
             getByTestId = result.getByTestId;
             queryAllByRole = result.queryAllByRole;

@@ -1,12 +1,10 @@
 import { render, fireEvent } from "@testing-library/svelte";
 import '@testing-library/jest-dom';
 import DatetimeCardEditor from '../DatetimeCardEditor.svelte'
-import { createEventDispatcher } from "../svelte";
-import type { IConfig, IEntity } from "../types";
+import type { IEntity } from "../types";
 
 jest.mock("../svelte");
 
-const createEventDispatcherMock: jest.MockedFunction<typeof createEventDispatcher> = createEventDispatcher as jest.MockedFunction<typeof createEventDispatcher>;
 
 describe('DatetimeCardEditor.svelte', () => {
     test('when hass is not defined', async () => {
@@ -26,9 +24,6 @@ describe('DatetimeCardEditor.svelte', () => {
         let eventDispatcher: any;
 
         beforeEach(() => {
-            eventDispatcher = jest.fn();
-            createEventDispatcherMock.mockReturnValue(eventDispatcher);
-
             const result = render(DatetimeCardEditor, { hass });
             component = result.component;
             getByTestId = result.getByTestId;
@@ -226,12 +221,12 @@ describe('DatetimeCardEditor.svelte', () => {
         describe("when config.entities is not empty", () => {
             let entity1: IEntity;
             let entity2: IEntity;
-            let config: IConfig;
+            let config;
 
             beforeEach(async () => {
                 entity1 = { id: "input_datetime.test_1", max: 10 };
                 entity2 = { id: "input_datetime.test_2", max: 20 };
-                config = { entities: [entity1, entity2] } as IConfig;
+                config = { entities: [entity1, entity2] };
 
                 await component.setConfig(config);
             });
@@ -247,7 +242,7 @@ describe('DatetimeCardEditor.svelte', () => {
             test("when set config a second time", async () => {
                 entity1 = { id: "input_datetime.test_1", max: 0 };
                 entity2 = { id: "input_datetime.test_2", max: 0 };
-                config = { entities: [entity1, entity2] } as IConfig;
+                config = { entities: [entity1, entity2] };
                 await component.setConfig(config);
 
                 expect(getAllByRole("listitem")).toHaveLength(2);

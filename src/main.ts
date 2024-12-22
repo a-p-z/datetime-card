@@ -1,6 +1,3 @@
-import DatetimeCard from './DatetimeCard.svelte'
-import { overrideItemIdKeyNameBeforeInitialisingDndZones } from "svelte-dnd-action";
-
 export * from './datetime/DatetimeBar.svelte'
 export * from './datetime/DatetimeIcon.svelte'
 export * from './datetime/DatetimeLabel.svelte'
@@ -30,6 +27,3 @@ window.customCards.push({
     description: "Datetime card",
     documentationURL: "https://github.com/a-p-z/datetime-card",
 });
-
-(<any>DatetimeCard).getConfigElement = () => document.createElement("datetime-card-editor");
-overrideItemIdKeyNameBeforeInitialisingDndZones("key");

@@ -1,8 +1,6 @@
 import svelte from 'rollup-plugin-svelte';
-import commonjs from '@rollup/plugin-commonjs';
+import { sveltePreprocess } from 'svelte-preprocess';
 import resolve from '@rollup/plugin-node-resolve';
-import { terser } from 'rollup-plugin-terser';
-import sveltePreprocess from 'svelte-preprocess';
 import typescript from '@rollup/plugin-typescript';
 
 export default {
@@ -18,9 +16,7 @@ export default {
 			preprocess: sveltePreprocess({ sourceMap: true }),
 			compilerOptions: { customElement: true, dev: true }
 		}),
-		resolve({ dedupe: ['svelte'] }),
-		commonjs(),
-		typescript({ sourceMap: true, inlineSources: true }),
-		terser()
+		resolve(),
+		typescript({ sourceMap: true })
 	]
 };

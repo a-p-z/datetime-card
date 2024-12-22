@@ -12,18 +12,11 @@ describe("datetime", () => {
     const tenDaysAgo = new Date();
     tenDaysAgo.setUTCDate(tenDaysAgo.getUTCDate() - 10);
     [
-        { hass: undefined, entity: undefined, expected: 0 },
-        { hass: {}, entity: undefined, expected: 0 },
-        { hass: { states: {} }, entity: undefined, expected: 0 },
-        { hass: { states: { test: {} } }, entity: undefined, expected: 0 },
-        { hass: { states: { test: {} } }, entity: {}, expected: 0 },
-        { hass: { states: { test: {} } }, entity: { id: "tset" }, expected: 0 },
-        { hass: { states: { test: {} } }, entity: { id: "test" }, expected: 0 },
-        { hass: { states: { test: { state: yesterday.toISOString().split("T")[0] } } }, entity: { id: "test" }, expected: 1 },
-        { hass: { states: { test: { state: tenDaysAgo.toISOString().split("T")[0] } } }, entity: { id: "test" }, expected: 10 },
+        { hass: { states: { test: { attributes:{}, state: yesterday.toISOString().split("T")[0] } } }, entity: { id: "test", max:42 }, expected: 1 },
+        { hass: { states: { test: { attributes:{}, state: tenDaysAgo.toISOString().split("T")[0] } } }, entity: { id: "test", max:42 }, expected: 10 },
     ].forEach(({ hass, entity, expected }) => {
         test(`when hass=${JSON.stringify(hass)} and entity=${JSON.stringify(entity)}`, () => {
-            expect(getState(hass as IHass, entity)).toEqual(expected);
+            expect(getState(hass, entity)).toEqual(expected);
         });
     });
 

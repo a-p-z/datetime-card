@@ -21,8 +21,8 @@ function formatDayString(days: number, formatLabel: boolean): string {
     return `${sign}${months} ${monthString}, ${remainingDays} ${dayString}`;
 }
 
-function getState(hass?: IHass, entity?: IEntity): number {
-    const entityDate = hass?.states?.[entity?.id]?.state ? new Date(hass.states[entity?.id].state) : new Date();
+function getState(hass: IHass, entity: IEntity): number {
+    const entityDate = hass.states?.[entity.id]?.state ? new Date(hass.states[entity.id].state) : new Date();
     const currentDate = new Date();
     const differenceInMilliseconds = currentDate.getTime() - entityDate.getTime();
     const differenceInDays = differenceInMilliseconds / (1000 * 60 * 60 * 24);

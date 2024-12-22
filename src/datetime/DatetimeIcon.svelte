@@ -19,7 +19,7 @@
 <ha-icon data-testid="icon" {icon} style:color
          title="hold to reset {title}"
          use:hold
-         on:hold={(event) => resetDate(entity, event, hass, resetforward ? 1 : 0)}/>
+         on:hold={(event) => resetDate(entity, event, hass, resetforward ? 1 : 0)}></ha-icon>
 
 <style>
 </style>

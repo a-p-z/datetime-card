@@ -5,7 +5,7 @@ describe('clickoutside', () => {
 
     let element: HTMLElement;
     let clickedoutside: boolean;
-    let destroy: () => void;
+    let destroy: (() => void) | undefined;
 
     beforeEach(() => {
         clickedoutside = false;
@@ -17,7 +17,9 @@ describe('clickoutside', () => {
 
     afterEach(() => {
         element.removeEventListener("hold", listener)
-        destroy();
+        if (destroy) {
+            destroy();
+        }
     });
 
     test('when click outside', () => {

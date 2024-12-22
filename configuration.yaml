@@ -5,6 +5,12 @@ default_config:
 frontend:
   themes: !include_dir_merge_named themes
 
+input_datetime:
+  development:
+    name: Development
+    has_date: true
+    has_time: true
+
 lovelace:
   mode: yaml
   resources:

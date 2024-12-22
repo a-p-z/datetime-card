@@ -334,6 +334,7 @@
 <div class="plus">
     <ha-icon-button data-testid="plus" class="plus"
                     role="button"
+                    tabindex="0"
                     on:click={push} on:keypress={()=>{}}>
         <ha-icon icon="mdi:plus"></ha-icon>
     </ha-icon-button>

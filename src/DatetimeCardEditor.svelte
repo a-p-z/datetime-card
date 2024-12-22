@@ -1,126 +1,116 @@
-<svelte:options customElement="datetime-card-editor"/>
+<svelte:options customElement={{
+		tag: 'datetime-card-editor',
+        props: {config: { type: 'Object' } },
+		extend: (customElementConstructor) => {
+			return class extends customElementConstructor {
+				setConfig(config) { this.config = config; }
+			};
+		}
+	}
+}/>
 
 <script lang="ts">
-    import type {IAutocompleteItem, IConfig, IEntity, IHass} from "./types";
-    import {createEventDispatcher} from "./svelte";
-    import {dndzone} from "svelte-dnd-action";
+    import { flip } from 'svelte/animate';
+	import { fade } from 'svelte/transition';
+    import { draggable, droppable, type DragDropState } from '@thisux/sveltednd';
+    import type {IConfig, IEntity, IHass} from "./types";
     import {DraggableEntity} from "./draggable-entity";
-    import {flip} from "svelte/animate";
 
-    export let hass: IHass = undefined;
+    type Props = {
+        config: IConfig;
+        hass: IHass;
+    };
+    type InputEvent = {
+        target: HTMLInputElement;
+    };
 
-    export function setConfig(config: IConfig): void {
-        column = config.flex_direction?.includes("column");
-        draggableEntities = toDraggableEntities(config.entities);
-        format_label = config.format_label || false;
-        image = config.image || "";
-        reset_forward = config.reset_forward || false;
-        reverse = config.flex_direction?.includes("reverse");
-        show_expired_only = config.show_expired_only || false;
-        show_names = config.show_names || false;
-        title = config.title || "";
-    }
+    const FLIP_DURATION = 200;
+    const FADE_DURATION = 150;
 
-    $: autocompleteItems = Object.keys(hass?.states || {})
+    let { config, hass } = $props<Props>();
+
+    let column = $state<boolean>(false);
+    let dragDisabled = $state<boolean>(true);
+    let draggableEntities = $state<DraggableEntity[]>([]);
+    let formatLabel = $state<boolean>(false);
+    let image = $state<string>("");
+    let key = $state<number>(1);
+    let resetForward = $state<boolean>(false);
+    let reverse = $state<boolean>(false);
+    let showExpiredOnly = $state<boolean>(false);
+    let showNames = $state<boolean>(false);
+    let title = $state<string>("");
+
+    let autocompleteItems = $derived(Object.keys(hass.states || {})
         .filter((entity_id) => entity_id.startsWith("input_datetime"))
-        .map((entity_id) => toAutocompleteItem(entity_id));
+        .map((entity_id) => toAutocompleteItem(entity_id)));
 
-    const dropTargetStyle = {outline: "var(--primary-color) solid 2px"};
-    const flipDurationMs = 200;
-    const svelteDispatch = createEventDispatcher();
+    $effect(() => {
+        setTimeout(() => {
+            column = config.flex_direction?.includes("column");
+            draggableEntities = config.entities?.map(toDraggableEntity) || [{id: "", key: (()=>key)(), max: ""}];
+            formatLabel = config.format_label || false;
+            image = config.image || "";
+            resetForward = config.reset_forward || false;
+            reverse = config.flex_direction?.includes("reverse");
+            showExpiredOnly = config.show_expired_only || false;
+            showNames = config.show_names || false;
+            title = config.title || "";
+        }, 0);
+    });
 
-    let column = false;
-    let dragDisabled = true;
-    let draggableEntities: DraggableEntity[] = [new DraggableEntity(1)];
-    let format_label = false;
-    let image: string;
-    let key = 1;
-    let reset_forward = false;
-    let reverse = false;
-    let show_expired_only = false;
-    let show_names: boolean;
-    let title: string;
-
-    function consider(event: any): void {
-        draggableEntities = event.detail.items;
-    }
-
-    function dispatchConfigChanged(): void {
-        const type = "custom:datetime-card";
-        const entities = draggableEntities.map(toEntity);
-        const flex_direction =
-            (column ? "column" : "row") + (reverse ? "-reverse" : "");
-        const config = {
-            entities,
-            flex_direction,
-            format_label,
-            image,
-            reset_forward,
-            show_expired_only,
-            show_names,
-            title,
-            type,
-        };
-        svelteDispatch("config-changed", {config});
-    }
-
-    function finalize(event: CustomEvent): void {
-        draggableEntities = event.detail.items;
-        dragDisabled = true;
-        dispatchConfigChanged();
-    }
-
-    function newKey(): number {
-        return key++;
-    }
-
-    function push(): void {
+    function addDraggableEntity(): void {
         draggableEntities = [
             ...draggableEntities,
             new DraggableEntity(newKey()),
         ];
     }
 
-    function splice(_key: number): void {
-        draggableEntities = draggableEntities.filter(({key}) => key !== _key);
+    function deleteDraggableEntity(k: number): void {
+        draggableEntities = draggableEntities.filter(({key}) => key !== k);
         dispatchConfigChanged();
     }
 
-    function startDrag(): void {
-        if (draggableEntities.length < 2) {
-            return;
-        }
+    function dispatchConfigChanged(): void {
+        const type = "custom:datetime-card";
+        const entities = draggableEntities.map(toEntity);
+        const flex_direction = (column ? "column" : "row") + (reverse ? "-reverse" : "");
+        const config = {
+            entities,
+            flex_direction,
+            format_label: formatLabel,
+            image,
+            reset_forward: resetForward,
+            show_expired_only: showExpiredOnly,
+            show_names: showNames,
+            title,
+            type,
+        };
 
-        dragDisabled = false;
+        $host().dispatchEvent(new CustomEvent("config-changed", { detail: { config } }));
     }
 
-    function stopDrag(): void {
-        dragDisabled = true;
+    function handleDrop(state: DragDropState<DraggableEntity>) {
+		const { draggedItem, targetContainer } = state;
+		const dragIndex = draggableEntities.findIndex((entity: DraggableEntity) => entity.key ===
+            draggedItem.key);
+		const dropIndex = parseInt(targetContainer ?? '0');
+
+		if (dragIndex !== -1 && !isNaN(dropIndex)) {
+			const [entity] = draggableEntities.splice(dragIndex, 1);
+			draggableEntities.splice(dropIndex, 0, entity);
+		}
+        dispatchConfigChanged();
+	}
+
+    function newKey(): number {
+        return ++key;
     }
 
     function toAutocompleteItem(entity_id: string): IAutocompleteItem {
         const primaryText = hass.states[entity_id].attributes.friendly_name;
         const secondaryText = entity_id;
         return {primaryText, secondaryText, value: entity_id};
-    }
-
-    function toDraggableEntities(entities: IEntity[]): DraggableEntity[] {
-        if (!entities) {
-            return [new DraggableEntity(newKey())];
-        }
-
-        if (entities.length !== draggableEntities.length) {
-            return entities.map(toDraggableEntity);
-        }
-
-        const result = [...draggableEntities];
-        for (let i = 0; i < entities.length; i++) {
-            const max = entities[i].max > 0 ? entities[i].max.toString() : "";
-            result[i].friendly_name = entities[i].friendly_name || "";
-            result[i].id = entities[i].id;
-            result[i].max = max;
-        }
-        return result;
     }
 
     function toDraggableEntity({friendly_name, id, max}: IEntity): DraggableEntity {
@@ -131,67 +121,67 @@
         return {friendly_name, id, max: parseInt(max) || 0};
     }
 
-    function updateColumn(event: Event): void {
-        column = (<HTMLInputElement>event.target).checked;
+    function updateColumn({ target }: InputEvent): void {
+        column = target.checked;
         dispatchConfigChanged();
     }
 
-    function updateFriendlyName(event: Event, entity: DraggableEntity): void {
-        const value = (<HTMLInputElement>event.target).value;
-        entity.friendly_name = value ? value : undefined;
+    function updateId(id: string, entity: DraggableEntity): void {
+        draggableEntities = draggableEntities.map(e => e === entity ? { ...e, id: id } : e);
         dispatchConfigChanged();
     }
 
-    function updateShowExpiredOnly(event: Event): void {
-        show_expired_only = (<HTMLInputElement>event.target).checked;
+    function updateFormatLabel({ target }: InputEvent): void {
+        formatLabel = target.checked;
         dispatchConfigChanged();
     }
 
-    function updateId(event: CustomEvent, entity: DraggableEntity): void {
-        entity.id = event.detail.value;
+    function updateFriendlyName({ target }: InputEvent, entity: DraggableEntity): void {
+        const friendly_name = target.value;
+        draggableEntities = draggableEntities.map(e => e === entity ? { ...e, friendly_name } : e);
         dispatchConfigChanged();
     }
 
-    function updateImage(event: Event): void {
-        image = (<HTMLInputElement>event.target).value;
+    function updateImage({ target }: InputEvent): void {
+        image = target.value;
         dispatchConfigChanged();
     }
 
-    function updateMax(event: Event, entity: DraggableEntity): void {
-        const value = Number((<HTMLInputElement>event.target).value);
+    function updateMax({ target }: InputEvent, entity: DraggableEntity): void {
+        const value = Number(target.value);
 
         if (!Number.isInteger(value) || value < 0) {
-            (<HTMLInputElement>event.target).value = entity.max;
+            input.value = entity.max;
             return;
         }
 
-        (<HTMLInputElement>event.target).value = value.toString();
-        entity.max = value.toString();
+        target.value = value.toString();
+        entity.max = value
         dispatchConfigChanged();
     }
 
-    function updateFormatLabel(event: Event): void {
-        format_label = (<HTMLInputElement>event.target).checked;
+    function updateResetForward({ target }: InputEvent): void {
+        resetForward = target.checked;
         dispatchConfigChanged();
     }
 
-    function updateResetForward(event: Event): void {
-        reset_forward = (<HTMLInputElement>event.target).checked;
+    function updateReverse({ target }: InputEvent): void {
+        reverse = target.checked;
         dispatchConfigChanged();
     }
 
-    function updateReverse(event: Event): void {
-        reverse = (<HTMLInputElement>event.target).checked;
+    function updateShowExpiredOnly({ target }: InputEvent): void {
+        showExpiredOnly = target.checked;
         dispatchConfigChanged();
     }
 
-    function updateShowNames(event: Event): void {
-        show_names = (<HTMLInputElement>event.target).checked;
+    function updateShowNames({ target }: InputEvent): void {
+        showNames = target.checked;
         dispatchConfigChanged();
     }
 
-    function updateTitle(event: Event): void {
-        title = (<HTMLInputElement>event.target).value;
+    function updateTitle({ target }: InputEvent): void {
+        title = target.value;
         dispatchConfigChanged();
     }
 </script>
@@ -200,14 +190,14 @@
         data-testid="title"
         label="Title (optional)"
         value={title}
-        on:input={updateTitle}
+        oninput={updateTitle}
 ></ha-textfield>
 
 <ha-textfield
         data-testid="image"
         label="Image (optional)"
         value={image}
-        on:input={updateImage}
+        oninput={updateImage}
 ></ha-textfield>
 
 <section class="switches">
@@ -215,23 +205,23 @@
             id="column-switch"
             aria-label="Column"
             checked={column}
-            on:change={updateColumn}
+            onchange={updateColumn}
     ></ha-switch>
     <label for="column-switch">Column</label>
 
     <ha-switch
             id="format-label-switch"
             aria-label="Format label"
-            checked={format_label}
-            on:change={updateFormatLabel}
+            checked={formatLabel}
+            onchange={updateFormatLabel}
     ></ha-switch>
     <label for="format-label-switch">Format label</label>
 
     <ha-switch
             id="reset-forward-switch"
             aria-label="Reset forward"
-            checked={reset_forward}
-            on:change={updateResetForward}
+            checked={resetForward}
+            onchange={updateResetForward}
     ></ha-switch>
     <label for="reset-forward-switch">Reset forward</label>
 
@@ -239,23 +229,23 @@
             id="reverse-switch"
             aria-label="Reverse"
             checked={reverse}
-            on:change={updateReverse}
+            onchange={updateReverse}
     ></ha-switch>
     <label for="reverse-switch">Reverse</label>
 
     <ha-switch
             id="show-expired-only-switch"
             aria-label="Show expired only"
-            checked={show_expired_only}
-            on:change={updateShowExpiredOnly}
+            checked={showExpiredOnly}
+            onchange={updateShowExpiredOnly}
     ></ha-switch>
     <label for="show-expired-only-switch">Show expired only</label>
 
     <ha-switch
             id="show-names-switch"
             aria-label="Show names"
-            checked={show_names}
-            on:change={updateShowNames}
+            checked={showNames}
+            onchange={updateShowNames}
     ></ha-switch>
     <label for="show-names-switch">Show names</label>
 </section>
@@ -265,68 +255,71 @@
 <section
         data-testid="entities"
         class="entities"
-        use:dndzone={{
-		items: draggableEntities,
-		dragDisabled,
-		dropTargetStyle,
-		flipDurationMs,
-	}}
-        on:consider={consider}
-        on:finalize={finalize}
+
 >
     {#each draggableEntities as entity, index (entity.key)}
         <div
                 role="listitem"
                 class="entity"
-                animate:flip={{ duration: flipDurationMs }}
+                animate:flip={{ duration: FLIP_DURATION }}
+                in:fade={{ duration: FADE_DURATION }}
+                out:fade={{ duration: FADE_DURATION }}
+                use:draggable={{ container: index.toString(), disabled: dragDisabled, dragData: entity }}
+                use:droppable={{ container: index.toString(), callbacks: { onDrop: handleDrop } }}
         >
-            <ha-icon
-                    data-testid="handle-{index}"
-                    class="handle"
-                    icon="mdi:drag"
-                    role="menuitem"
-                    tabindex="0"
-                    on:mousedown={startDrag}
-                    on:touchstart={startDrag}
-                    on:mouseup={stopDrag}
-                    on:touchend={stopDrag}
-            ></ha-icon>
+            {#if draggableEntities.length > 1}
+                <div class="handle">
+                    <ha-icon
+                            data-testid="handle-{index}"
+                            icon="mdi:drag"
+                            role="menuitem"
+                            tabindex="0"
+                            onmousedown={ () => dragDisabled = false }
+                            ontouchstart={ () => dragDisabled = false }
+                            onmouseup={ () => dragDisabled = true }
+                            ontouchend={ () => dragDisabled = true }
+                    ></ha-icon>
+                </div>
+            {:else }
+                <div class="handle"></div>
+            {/if}
             <datetime-card-autocomplete
                     data-testid="datetime-card-autocomplete-{index}"
                     label="Entity"
                     items={autocompleteItems}
                     value={entity.id}
-                    on:change={(event) => updateId(event, entity)}
+                    updateId={(id) => updateId(id, entity)}
             ></datetime-card-autocomplete>
-
             <ha-textfield
                     data-testid="max-{index}"
                     class="max-textfield"
                     label="Max"
                     value={entity.max}
-                    on:input={(event) => updateMax(event, entity)}
+                    oninput={(event) => updateMax(event, entity)}
             ></ha-textfield>
 
             {#if draggableEntities.length > 1}
                 <ha-icon-button
+                        class="delete"
                         data-testid="delete-{index}"
                         role="menuitem"
                         tabindex="0"
-                        on:click={() => splice(entity.key)}
-                        on:keypress={()=>{}}
+                        onclick={() => deleteDraggableEntity(entity.key)}
+                        onkeydown={()=>{}}
                 >
                     <ha-icon icon="mdi:delete"></ha-icon>
                 </ha-icon-button>
             {:else }
-                <div></div>
+                <div class="delete"></div>
             {/if}
+
             <div></div>
+
             <ha-textfield
                     data-testid="friendly-name-{index}"
-                    class="friendly-name"
                     label="Friendly name"
-                    value={entity.friendly_name}
-                    on:input={(event) => updateFriendlyName(event, entity)}
+                    value={entity.friendly_name || ""}
+                    oninput={(event) => updateFriendlyName(event, entity)}
             ></ha-textfield>
             <div></div>
             <div></div>
@@ -337,7 +330,7 @@
     <ha-icon-button data-testid="plus" class="plus"
                     role="button"
                     tabindex="0"
-                    on:click={push} on:keypress={()=>{}}>
+                    onclick={addDraggableEntity} onkeydown={()=>{}}>
         <ha-icon icon="mdi:plus"></ha-icon>
     </ha-icon-button>
 </div>
@@ -357,6 +350,11 @@
         margin-left: 30px;
     }
 
+    .delete {
+        padding-right: 8px;
+        width: 32px;
+    }
+
     .entity {
         display: grid;
         grid-template-columns: auto 1fr auto auto;
@@ -364,10 +362,28 @@
     }
 
     .handle {
-        cursor: grab;
         padding-right: 8px;
+        padding-top: 16px;
         width: 32px;
     }
+
+    .handle > ha-icon {
+        cursor: grab;
+    }
+
+    :global(.dragging > .handle > ha-icon) {
+        cursor: grabbing;
+    }
+
+    @keyframes pulse {
+		0%,
+		100% {
+			opacity: 0.6;
+		}
+		50% {
+			opacity: 0.8;
+		}
+	}
 
     .max-textfield {
         margin: 0 0 0 5px;

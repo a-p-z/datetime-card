@@ -2,21 +2,23 @@
 
 <script lang="ts">
     import { clickoutside } from "./actions/clickoutside";
-    import { createEventDispatcher } from "./svelte";
     import type { IAutocompleteItem } from "./types";
 
-    export let items: IAutocompleteItem[] = [];
-    export let label: string = "";
-    export let value: string = "";
+    type Props = {
+		items: IAutocompleteItem[];
+        label: string;
+        updateId: (value: string) => void;
+        value: string;
+	};
 
-    const svelteDispatch = createEventDispatcher();
+    let {items=[], label="", updateId, value=""} = $props<Props>();
 
-    let filteredItems: IAutocompleteItem[] = [];
-    let textfield: { clientWidth: number };
+    let filteredItems = $state<IAutocompleteItem[]>([]);
+    let textfield = $state<{ clientWidth: number }>({clientWidth: 2});
 
     function filter({ target }: { target: HTMLInputElement }): void {
         value = target.value;
-        svelteDispatch("change", { value });
+        updateId(value);
 
         const filterText = value
             .trim()
@@ -60,10 +62,6 @@
     function reset(): void {
         setTimeout(() => (filteredItems = []), 100);
     }
-
-    function complete(value: string): void {
-        svelteDispatch("change", { value });
-    }
 </script>
 
 <ha-textfield
@@ -71,7 +69,7 @@
     bind:this={textfield}
     {label}
     {value}
-    on:input={filter}
+    oninput={filter}
 ></ha-textfield>
 
 {#if filteredItems.length > 0 && value !== filteredItems[0].value}
@@ -79,10 +77,10 @@
         class="items-list"
         style:width="{textfield.clientWidth - 2}px"
         use:clickoutside
-        on:clickoutside={reset}
+        onclickoutside={reset}
     >
         {#each filteredItems as { primaryText, secondaryText, value }}
-            <li class="item" role="menuitem" on:click={() => complete(value)} on:keypress={()=>{}}>
+            <li class="item" role="menuitem" onclick={() => updateId(value)} onkeydown={()=>{}}>
                 <span class="primary-text">{@html primaryText}</span>
                 {#if !!secondaryText}
                     <span class="secondary-text">{@html secondaryText}</span>

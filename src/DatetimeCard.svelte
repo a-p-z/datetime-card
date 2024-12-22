@@ -1,12 +1,21 @@
-<svelte:options customElement="datetime-card" />
+<svelte:options customElement={{
+		tag: 'datetime-card',
+		props: { config: { type: 'Object' } },
+		extend: (customElementConstructor) => {
+			return class extends customElementConstructor {
+				setConfig(config) { this.config = config; }
 
-<script context="module" lang="ts">
+				static getConfigElement() {
+    				return document.createElement("datetime-card-editor");
+				}
+			};
+		}
+	}
+}/>
+
+<script module lang="ts">
 	import { getState } from "./datetime/datetime";
 	import type { IEntity, IHass } from "./types";
-
-	const DEFAULT_SRC =
-		"https://demo.home-assistant.io/stub_config/t-shirt-promo.png";
-	const DEFAULT_TITLE = "Datetime Card";
 
 	function getDefaultEntities(hass: IHass): IEntity[] {
 		const states = hass?.states || {};
@@ -20,31 +29,24 @@
 </script>
 
 <script lang="ts">
-	import type { IConfig } from "./types";
 	import { isExpired } from "./datetime/datetime";
+	import type {IConfig} from "./types";
 
-	export let hass: IHass = undefined;
+	type Props = {
+		config: IConfig;
+		hass: IHass;
+	};
 
-	export function setConfig(config: IConfig): void {
-		entities = config.entities;
-		flex_direction = config.flex_direction || "row";
-		formatlabel = config.format_label || false;
-		header = config.title !== undefined ? config.title : DEFAULT_TITLE;
-		resetforward = config.reset_forward || false;
-		showExpiredOnly = config.show_expired_only || false;
-		shownames = config.show_names || false;
-		src = config.image !== undefined ? config.image : DEFAULT_SRC;
-	}
+	let { config, hass } = $props<Props>();
 
-	$: entities = entities || getDefaultEntities(hass);
-
-	let flex_direction = "row";
-	let formatlabel: boolean;
-	let header: string;
-	let resetforward: boolean;
-	let showExpiredOnly: boolean;
-	let shownames: boolean;
-	let src: string;
+	let entities = $derived<IEntity[]>(config.entities || getDefaultEntities(hass));
+	let flexDirection = $derived<"column" | "column-reverse" | "row" | "row-reverse">(config.flex_direction || "row");
+	let formatLabel = $derived<boolean>(config.format_label || false);
+	let header = $derived<string>(config.title || "Datetime Card");
+	let resetForward = $derived<boolean>(config.reset_forward || false);
+	let showExpiredOnly = $derived<boolean>(config.show_expired_only || false);
+	let showNames = $derived<boolean>(config.show_names || false);
+	let src = $derived<string>(config.image !== undefined ? config.image : "https://demo.home-assistant.io/stub_config/t-shirt-promo.png");
 </script>
 
 <ha-card>
@@ -55,7 +57,7 @@
 	<div
 		data-testid="card-content"
 		class="card-content"
-		style:flex-direction={flex_direction}
+		style:flex-direction={flexDirection}
 	>
 		{#if !!src}
 			<img {src} alt="card-pict" />
@@ -63,13 +65,12 @@
 
 		<div class="grid">
 			{#each entities as entity}
-                {#if !showExpiredOnly || isExpired(entity.max, resetforward, getState(hass, entity)) }
-                    <datetime-icon role="listitem" {entity} {hass} {resetforward}></datetime-icon>
+                {#if !showExpiredOnly || isExpired(entity.max, resetForward, getState(hass, entity)) }
+                    <datetime-icon role="listitem" {entity} {hass} {resetForward}></datetime-icon>
 
-                    <datetime-bar {entity} friendlyname="{entity.friendly_name}" {hass}
-								  {resetforward} {shownames}></datetime-bar>
+                    <datetime-bar {entity} friendlyName={entity.friendly_name} {hass} {resetForward} {showNames}></datetime-bar>
 
-                    <datetime-label {entity} {formatlabel} {hass} {resetforward}></datetime-label>
+                    <datetime-label {entity} {formatLabel} {hass} {resetForward}></datetime-label>
                 {/if}
 			{/each}
 		</div>

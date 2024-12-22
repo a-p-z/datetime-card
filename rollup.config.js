@@ -2,6 +2,7 @@ import svelte from 'rollup-plugin-svelte';
 import { sveltePreprocess } from 'svelte-preprocess';
 import resolve from '@rollup/plugin-node-resolve';
 import typescript from '@rollup/plugin-typescript';
+import postcss from 'rollup-plugin-postcss';
 
 export default {
 	input: 'src/main.ts',
@@ -17,6 +18,7 @@ export default {
 			compilerOptions: { customElement: true, dev: true }
 		}),
 		resolve(),
-		typescript({ sourceMap: true })
+		typescript({ sourceMap: true }),
+		postcss({extract: false, inject: {insertAt: 'top'}, minimize: true})
 	]
 };

@@ -285,6 +285,7 @@
                     class="handle"
                     icon="mdi:drag"
                     role="menuitem"
+                    tabindex="0"
                     on:mousedown={startDrag}
                     on:touchstart={startDrag}
                     on:mouseup={stopDrag}
@@ -310,6 +311,7 @@
                 <ha-icon-button
                         data-testid="delete-{index}"
                         role="menuitem"
+                        tabindex="0"
                         on:click={() => splice(entity.key)}
                         on:keypress={()=>{}}
                 >

@@ -1,4 +1,4 @@
-<svelte:options tag="datetime-card" />
+<svelte:options customElement="datetime-card" />
 
 <script context="module" lang="ts">
 	import { getState } from "./datetime/datetime";

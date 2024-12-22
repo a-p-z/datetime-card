@@ -1,4 +1,4 @@
-<svelte:options tag="datetime-icon"/>
+<svelte:options customElement="datetime-icon"/>
 
 <script lang="ts">
     import type {IEntity, IHass} from "../types";

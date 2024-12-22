@@ -1,4 +1,4 @@
-<svelte:options tag="datetime-card-autocomplete" />
+<svelte:options customElement="datetime-card-autocomplete" />
 
 <script lang="ts">
     import { clickoutside } from "./actions/clickoutside";

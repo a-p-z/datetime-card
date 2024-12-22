@@ -17,7 +17,7 @@ describe('hold', () => {
 
     let element: HTMLElement;
     let holded: boolean;
-    let destroy: () => void;
+    let destroy: (() => void) | undefined;
 
     beforeEach(() => {
         jest.useFakeTimers();
@@ -31,7 +31,9 @@ describe('hold', () => {
 
     afterEach(() => {
         element.removeEventListener("hold", listener)
-        destroy();
+        if (destroy) {
+            destroy();
+        }
         jest.useRealTimers();
     });
 

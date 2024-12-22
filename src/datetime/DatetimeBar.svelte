@@ -33,7 +33,7 @@
 		style:width="{barWidth}%"
 		style:height="{barHeight}px"
 		style:background={barColor}
-	/>
+	></div>
 
 	{#if shownames && !!friendlyName}
 		<div

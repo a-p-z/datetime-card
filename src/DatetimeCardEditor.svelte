@@ -201,14 +201,14 @@
         label="Title (optional)"
         value={title}
         on:input={updateTitle}
-/>
+></ha-textfield>
 
 <ha-textfield
         data-testid="image"
         label="Image (optional)"
         value={image}
         on:input={updateImage}
-/>
+></ha-textfield>
 
 <section class="switches">
     <ha-switch
@@ -216,7 +216,7 @@
             aria-label="Column"
             checked={column}
             on:change={updateColumn}
-    />
+    ></ha-switch>
     <label for="column-switch">Column</label>
 
     <ha-switch
@@ -224,7 +224,7 @@
             aria-label="Format label"
             checked={format_label}
             on:change={updateFormatLabel}
-    />
+    ></ha-switch>
     <label for="format-label-switch">Format label</label>
 
     <ha-switch
@@ -232,7 +232,7 @@
             aria-label="Reset forward"
             checked={reset_forward}
             on:change={updateResetForward}
-    />
+    ></ha-switch>
     <label for="reset-forward-switch">Reset forward</label>
 
     <ha-switch
@@ -240,7 +240,7 @@
             aria-label="Reverse"
             checked={reverse}
             on:change={updateReverse}
-    />
+    ></ha-switch>
     <label for="reverse-switch">Reverse</label>
 
     <ha-switch
@@ -248,7 +248,7 @@
             aria-label="Show expired only"
             checked={show_expired_only}
             on:change={updateShowExpiredOnly}
-    />
+    ></ha-switch>
     <label for="show-expired-only-switch">Show expired only</label>
 
     <ha-switch
@@ -256,7 +256,7 @@
             aria-label="Show names"
             checked={show_names}
             on:change={updateShowNames}
-    />
+    ></ha-switch>
     <label for="show-names-switch">Show names</label>
 </section>
 
@@ -288,14 +288,14 @@
                     on:touchstart={startDrag}
                     on:mouseup={stopDrag}
                     on:touchend={stopDrag}
-            />
+            ></ha-icon>
             <datetime-card-autocomplete
                     data-testid="datetime-card-autocomplete-{index}"
                     label="Entity"
                     items={autocompleteItems}
                     value={entity.id}
                     on:change={(event) => updateId(event, entity)}
-            />
+            ></datetime-card-autocomplete>
 
             <ha-textfield
                     data-testid="max-{index}"
@@ -303,7 +303,7 @@
                     label="Max"
                     value={entity.max}
                     on:input={(event) => updateMax(event, entity)}
-            />
+            ></ha-textfield>
 
             {#if draggableEntities.length > 1}
                 <ha-icon-button
@@ -311,7 +311,7 @@
                         on:click={() => splice(entity.key)}
                         on:keypress={()=>{}}
                 >
-                    <ha-icon icon="mdi:delete"/>
+                    <ha-icon icon="mdi:delete"></ha-icon>
                 </ha-icon-button>
             {:else }
                 <div></div>
@@ -323,7 +323,7 @@
                     label="Friendly name"
                     value={entity.friendly_name}
                     on:input={(event) => updateFriendlyName(event, entity)}
-            />
+            ></ha-textfield>
             <div></div>
             <div></div>
         </div>
@@ -331,7 +331,7 @@
 </section>
 <div class="plus">
     <ha-icon-button data-testid="plus" class="plus" on:click={push} on:keypress={()=>{}}>
-        <ha-icon icon="mdi:plus"/>
+        <ha-icon icon="mdi:plus"></ha-icon>
     </ha-icon-button>
 </div>
 

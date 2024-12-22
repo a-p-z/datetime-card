@@ -72,7 +72,7 @@
     {label}
     {value}
     on:input={filter}
-/>
+></ha-textfield>
 
 {#if filteredItems.length > 0 && value !== filteredItems[0].value}
     <ul

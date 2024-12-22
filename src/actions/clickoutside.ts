@@ -1,7 +1,8 @@
 export function clickoutside(element: HTMLElement): { destroy?: () => void } {
 
-    const handleClick = (event) => {
-        if (element && !element.contains(event.target) && !event.defaultPrevented) {
+    const handleClick = (event: MouseEvent) => {
+        const target = event.target as Node;
+        if (element && !element.contains(target) && !event.defaultPrevented) {
             element.dispatchEvent(new CustomEvent('clickoutside'));
         }
     };

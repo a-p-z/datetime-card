@@ -1,4 +1,4 @@
-<svelte:options tag="datetime-card-editor"/>
+<svelte:options customElement="datetime-card-editor"/>
 
 <script lang="ts">
     import type {IAutocompleteItem, IConfig, IEntity, IHass} from "./types";

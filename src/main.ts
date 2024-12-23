@@ -8,9 +8,17 @@ export * from './DatetimeCard.svelte'
 export * from './DatetimeCardAutocomplete.svelte'
 export * from './DatetimeCardEditor.svelte'
 
+type CustomCard = {
+    type: string;
+    name: string;
+    preview?: boolean;
+    description?: string;
+    documentationURL: string;
+}
+
 declare global {
     interface Window {
-        customCards?: any[]; // Todo: Find correct type
+        customCards?: CustomCard[];
     }
 }
 
@@ -20,6 +28,7 @@ window.customCards.push({
     name: "Datetime Card",
     preview: true,
     description: "Datetime card",
+    documentationURL: "https://github.com/a-p-z/datetime-card",
 });
 
 (<any>DatetimeCard).getConfigElement = () => document.createElement("datetime-card-editor");

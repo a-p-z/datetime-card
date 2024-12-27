@@ -11,10 +11,9 @@
         value: string;
 	};
 
-    let {items=[], label="", updateId, value=""} = $props<Props>();
+    let { items=[], label="", updateId, value="" } = $props<Props>();
 
     let filteredItems = $state<IAutocompleteItem[]>([]);
-    let textfield = $state<{ clientWidth: number }>({clientWidth: 2});
 
     function filter({ target }: { target: HTMLInputElement }): void {
         value = target.value;
@@ -36,10 +35,7 @@
             .map((item) => highlightMatch(item, regex));
     }
 
-    function highlightMatch(
-        item: IAutocompleteItem,
-        regex: RegExp
-    ): IAutocompleteItem {
+    function highlightMatch(item: IAutocompleteItem, regex: RegExp): IAutocompleteItem {
         const primaryText = item.primaryText.replace(
             regex,
             (match: string) => `<strong>${match}</strong>`
@@ -66,7 +62,6 @@
 
 <ha-textfield
     data-testid="text-field"
-    bind:this={textfield}
     {label}
     {value}
     oninput={filter}
@@ -75,7 +70,6 @@
 {#if filteredItems.length > 0 && value !== filteredItems[0].value}
     <ul
         class="items-list"
-        style:width="{textfield.clientWidth - 2}px"
         use:clickoutside
         onclickoutside={reset}
     >
@@ -116,14 +110,14 @@
         list-style: none;
         padding: 10px 10px 10px 25px;
         cursor: pointer;
-        background-color: #fff;
+    background-color: var(--material-background-color);
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
     }
 
     .item:hover {
-        background-color: var(--mdc-text-field-fill-color, whitesmoke);
+    background-color: var(--material-secondary-background-color);
     }
 
     .primary-text {

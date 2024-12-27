@@ -1,10 +1,10 @@
 export class DraggableEntity {
-    friendly_name?: string;
-    id: string = "";
-    max: string = "";
+  friendly_name?: string;
+  id: string = "";
+  max: string = "";
 
-    constructor(public key: number) {
-        this.key = key;
-        this.friendly_name = "";
-    }
+  constructor(public key: number) {
+    this.key = key;
+    this.friendly_name = "";
+  }
 }

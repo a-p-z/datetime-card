@@ -5,19 +5,23 @@
     import {formatDayString, getState, resetDate} from "./datetime";
     import {hold} from "../actions/hold";
 
-    export let entity: IEntity = undefined;
-    export let formatlabel: boolean;
-    export let hass: IHass = undefined;
-    export let resetforward: boolean;
+    type Props = {
+        entity: IEntity;
+        formatLabel: boolean;
+        hass: IHass;
+        resetForward: boolean;
+    };
 
-    $: label = formatDayString(getState(hass, entity), formatlabel);
+    let { entity, formatLabel, hass, resetForward } = $props<Props>();
+
+    let label = $derived<string>(formatDayString(getState(hass, entity), formatLabel));
 </script>
 
 <div
         data-testid="days"
         title="hold to reset"
         use:hold
-        on:hold={(event) => resetDate(entity, event, hass, resetforward ? 1 : 0)}
+        onhold={(event) => resetDate(entity, event, hass, resetForward ? 1 : 0)}
 >
     {label}
 </div>

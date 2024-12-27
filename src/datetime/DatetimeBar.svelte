@@ -5,18 +5,22 @@
 	import { hold } from "../actions/hold";
 	import { getState, isExpired, resetDate } from "./datetime";
 
-	export let entity: IEntity = undefined;
-	export let friendlyname: string = undefined;
-	export let hass: IHass = undefined;
-	export let resetforward: boolean;
-	export let shownames: boolean = undefined;
+	type Props = {
+		entity: IEntity
+		friendlyName: string;
+		hass: IHass
+		resetForward: boolean;
+		showNames: boolean;
+	};
 
-	$: barColor = isExpired(max, resetforward, state) ? "#df4c1e" : "#0da035";
-	$: barHeight = shownames && !!friendlyName ? 18 : 3;
-	$: friendlyName = friendlyname || hass?.states?.[entity?.id]?.attributes?.friendly_name;
-	$: barWidth = Math.min(Math.abs((100 * (resetforward ? state + max : state)) / max), 100);
-	$: max = entity?.max;
-	$: state = getState(hass, entity);
+	let { entity, friendlyName, hass, resetForward, showNames } = $props<Props>()
+
+	let max = $derived<number>(entity?.max);
+	let state = $derived<number>(getState(hass, entity));
+	let barColor = $derived<"#df4c1e" | "#0da035">(isExpired(max, resetForward, state)	? "#df4c1e" : "#0da035");
+	let barHeight = $derived<3 | 18>(showNames ? 18 : 3);
+	let name = $derived<string>(friendlyName || hass?.states?.[entity?.id]?.attributes?.friendly_name);
+	let barWidth = $derived<number>(Math.min(Math.abs((100 * (resetForward ? state + max : state)) / max), 100));
 </script>
 
 <div
@@ -25,7 +29,7 @@
 	style:height="{barHeight}px"
 	title="hold to reset"
 	use:hold
-	on:hold={(event) => resetDate(entity, event, hass, resetforward ? 1 : 0)}
+	onhold={(event) => resetDate(entity, event, hass, resetForward ? 1 : 0)}
 >
 	<div
 		data-testid="internal-bar"
@@ -35,13 +39,13 @@
 		style:background={barColor}
 	></div>
 
-	{#if shownames && !!friendlyName}
+	{#if showNames && !!name}
 		<div
 			data-testid="friendly-name"
 			class="friendly-name"
 			style:filter="drop-shadow(1px 1px 1px {barColor})"
 		>
-			{friendlyName}
+			{name}
 		</div>
 	{/if}
 </div>

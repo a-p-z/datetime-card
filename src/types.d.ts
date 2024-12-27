@@ -1,32 +1,42 @@
 export interface IAutocompleteItem {
-    primaryText: string;
-    secondaryText?: string;
-    value: string;
+  primaryText: string;
+  secondaryText?: string;
+  value: string;
 }
 
 export interface IConfig {
-    entities?: IEntity[];
-    flex_direction: "column" | "column-reverse" | "row" | "row-reverse";
-    format_label?: boolean;
-    image?: string;
-    readonly type: "custom:datetime-card";
-    reset_forward?: boolean;
-    show_expired_only?: boolean;
-    show_names: boolean;
-    title?: string;
+  entities?: IEntity[];
+  flex_direction: "column" | "column-reverse" | "row" | "row-reverse";
+  format_label?: boolean;
+  image?: string;
+  readonly type: "custom:datetime-card";
+  reset_forward?: boolean;
+  show_expired_only?: boolean;
+  show_names: boolean;
+  title?: string;
 }
 
 export interface IEntity {
-    friendly_name?: string;
-    id: string;
-    max: number;
+  friendly_name?: string;
+  id: string;
+  max: number;
 }
 
 export interface IHass {
-    states: { [key: string]: IState; };
+  states: { [key: string]: IState };
 }
 
 export interface IState {
-    attributes: { [key: string]: string; };
-    state: any
+  attributes: { [key: string]: string };
+  state: string;
+}
+
+export interface HaCallServiceButton extends HTMLElement {
+  hass: IHass;
+  confirmation: string;
+  domain: "input_datetime";
+  service: "set_datetime";
+  data: { entity_id: string; date: string };
+
+  _buttonTapped(): void;
 }

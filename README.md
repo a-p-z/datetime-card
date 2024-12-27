@@ -45,8 +45,6 @@ entities:
     max: 17
 ```
 
-> **_NOTE:_** [lovelace-card-mod](https://github.com/thomasloven/lovelace-card-mod) and [lovelace-layout-card](https://github.com/thomasloven/lovelace-layout-card) makes the visual editor crash because it tries to overwrite setConfig method, which in datetime-card is read-only. The code editor works, just ignore the error.
-
 ## Actions
 
 - reset date: just press and hold down the mouse button on the bar or on the days label to reset the entity to the current date.

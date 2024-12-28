@@ -25,7 +25,7 @@
     friendlyName || hass?.states?.[entity?.id]?.attributes?.friendly_name,
   );
   let barWidth = $derived<number>(
-    Math.min(Math.abs((100 * (resetForward ? state + max : state)) / max), 100),
+    Math.min((100 * state) / max + (resetForward ? 100 : 0), 100),
   );
 </script>
 

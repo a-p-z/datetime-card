@@ -1,4 +1,4 @@
-# Loads default set of integrations. Do not remove.
+# Loads the default set of integrations. Do not remove.
 default_config:
 
 # Load frontend themes from the themes folder
@@ -12,7 +12,7 @@ input_datetime:
     has_time: true
 
 lovelace:
-  mode: yaml
+  resource_mode: yaml
   resources:
     - url: /local/datetime-card/datetime-card.js
       type: module

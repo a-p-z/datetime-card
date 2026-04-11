@@ -66,7 +66,7 @@
 
 {#if filteredItems.length > 0 && value !== filteredItems[0].value}
   <ul class="items-list" use:clickoutside onclickoutside={reset}>
-    {#each filteredItems as { primaryText, secondaryText, value }}
+    {#each filteredItems as { primaryText, secondaryText, value } (value)}
       <li
         class="item"
         role="menuitem"

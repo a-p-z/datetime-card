@@ -47,7 +47,7 @@ entities:
 
 ## Actions
 
-- reset date: just press and hold down the mouse button on the bar or on the days label to reset the entity to the current date.
+- reset date: press and hold down the mouse button on the bar or on the days label to reset the entity to the current date.
 
 Note: the script needs tailoring for 3 things:
 

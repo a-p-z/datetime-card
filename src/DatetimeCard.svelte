@@ -75,7 +75,7 @@
     {/if}
 
     <div class="grid">
-      {#each entities as entity}
+      {#each entities as entity (entity.id)}
         {#if !showExpiredOnly || isExpired(entity.max, resetForward, getState(hass, entity))}
           <datetime-icon role="listitem" {entity} {hass} {resetForward}
           ></datetime-icon>

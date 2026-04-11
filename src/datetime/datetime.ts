@@ -26,9 +26,10 @@ function getState(hass: IHass, entity: IEntity): number {
     ? new Date(hass.states[entity.id].state)
     : new Date();
   const currentDate = new Date();
+  entityDate.setHours(0, 0, 0, 0);
+  currentDate.setHours(0, 0, 0, 0);
   const differenceInMilliseconds = currentDate.getTime() - entityDate.getTime();
-  const differenceInDays = differenceInMilliseconds / (1000 * 60 * 60 * 24);
-  return Math.floor(differenceInDays);
+  return Math.round(differenceInMilliseconds / (1000 * 60 * 60 * 24));
 }
 
 function isExpired(max: number, resetForward: boolean, state: number): boolean {

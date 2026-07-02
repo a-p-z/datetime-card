@@ -27,3 +27,4 @@ window.customCards.push({
   description: "Datetime card",
   documentationURL: "https://github.com/a-p-z/datetime-card",
 });
+console.info("🕑 datetime-card v1.0.10");

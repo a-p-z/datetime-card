@@ -14,7 +14,7 @@ export default defineConfig({
         name: "DatetimeCard",
       },
     },
-    sourcemap: true,
+    sourcemap: false,
     target: "esnext",
   },
   plugins: [

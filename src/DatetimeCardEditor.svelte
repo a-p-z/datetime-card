@@ -210,19 +210,19 @@
   }
 </script>
 
-<ha-textfield
+<ha-input
   data-testid="title"
   label="Title (optional)"
   value={title}
   oninput={updateTitle}
-></ha-textfield>
+></ha-input>
 
-<ha-textfield
+<ha-input
   data-testid="image"
   label="Image (optional)"
   value={image}
   oninput={updateImage}
-></ha-textfield>
+></ha-input>
 
 <section class="switches">
   <ha-switch
@@ -317,13 +317,13 @@
         value={entity.id}
         updateId={(id) => updateId(id, entity)}
       ></datetime-card-autocomplete>
-      <ha-textfield
+      <ha-input
         data-testid="max-{index}"
         class="max-textfield"
         label="Max"
         value={entity.max}
         oninput={(event) => updateMax(event, entity)}
-      ></ha-textfield>
+      ></ha-input>
 
       {#if draggableEntities.length > 1}
         <ha-icon-button
@@ -342,12 +342,13 @@
 
       <div></div>
 
-      <ha-textfield
+      <ha-input
+        class="friendly-name"
         data-testid="friendly-name-{index}"
         label="Friendly name"
         value={entity.friendly_name || ""}
         oninput={(event) => updateFriendlyName(event, entity)}
-      ></ha-textfield>
+      ></ha-input>
       <div></div>
       <div></div>
     </div>
@@ -372,7 +373,7 @@
     flex-direction: column;
   }
 
-  ha-textfield {
+  ha-input {
     margin-top: 3px;
     margin-bottom: 5px;
   }
@@ -431,5 +432,8 @@
     flex-wrap: wrap;
     gap: 16px 6px;
     margin: 16px 0;
+  }
+  .friendly-name {
+    z-index: 0;
   }
 </style>

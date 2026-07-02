@@ -61,8 +61,7 @@
   }
 </script>
 
-<ha-textfield data-testid="text-field" {label} {value} oninput={filter}
-></ha-textfield>
+<ha-input data-testid="text-field" {label} {value} oninput={filter}></ha-input>
 
 {#if filteredItems.length > 0 && value !== filteredItems[0].value}
   <ul class="items-list" use:clickoutside onclickoutside={reset}>
@@ -90,11 +89,12 @@
     height: 56px;
   }
 
-  ha-textfield {
+  ha-input {
     width: 100%;
   }
 
   .items-list {
+    background-color: white;
     margin: 0;
     padding: 0;
     position: relative;
